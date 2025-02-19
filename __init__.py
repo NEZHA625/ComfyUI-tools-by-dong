@@ -87,5 +87,5 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "TextToJsonNode":"save_to_json_by_dong",
     "path_join_Node":"path_join_by_dong",
     "SetAppidNode":"授权",
-    "Get_cookies_Node":"Get_cookies_Node"
+    "Get_cookies_Node":"登录"
 }
