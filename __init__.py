@@ -29,6 +29,7 @@ from .set_api import set_api_Node
 from .text_to_json import TextToJsonNode
 from .path_join_Node import path_join_Node
 from .set_appid import SetAppidNode
+from .get_cookies import Get_cookies_Node
 
 
 # 定义节点映射
@@ -57,6 +58,7 @@ NODE_CLASS_MAPPINGS = {
     "TextToJsonNode":TextToJsonNode,
     "path_join_Node":path_join_Node,
     "SetAppidNode":SetAppidNode,
+    "Get_cookies_Node":Get_cookies_Node,
 }
 
 # 定义节点显示名称映射
@@ -84,5 +86,6 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "set_api_Node":"set_api_Node_by_dong",
     "TextToJsonNode":"save_to_json_by_dong",
     "path_join_Node":"path_join_by_dong",
-    "SetAppidNode":"授权"
+    "SetAppidNode":"授权",
+    "Get_cookies_Node":"Get_cookies_Node"
 }

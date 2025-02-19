@@ -27,6 +27,7 @@ class Get_cookies_Node:
         return {
             "required": {
                 "platform": (["LibLib", "tusi", "runninghub", "kuaishou", "xhs", "douyin", "qq","dewu","shipinghao","civitai", "ins", "tiktok", "pinterest", "twitter"], {"default": "LibLib"}),
+                "time_sleep": ("INT", {"default": "30"}),
                 "is_enable": ("BOOLEAN", {"default": True}),
             }
         }
@@ -36,7 +37,7 @@ class Get_cookies_Node:
     FUNCTION = "Get_cookies"
     CATEGORY = "dong_tools/Get_cookies_by_dong"
 
-    def Get_cookies(self, platform, is_enable):
+    def Get_cookies(self, platform, time_sleep, is_enable):
         if not check():
             print("未授权用户")
             return (False,)
@@ -75,6 +76,7 @@ class Get_cookies_Node:
             driver.get(platform_url[platform])  # 使用动态平台网址
 
             # 等待一段时间以确保登录并生成 cookies
+            time.sleep(time_sleep)
             input("按任意键保存 cookies...")
 
             # 获取 cookies
