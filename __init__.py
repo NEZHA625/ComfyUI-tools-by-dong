@@ -30,6 +30,13 @@ from .text_to_json import TextToJsonNode
 from .path_join_Node import path_join_Node
 from .set_appid import SetAppidNode
 from .get_cookies import Get_cookies_Node
+from .img2url import IMG2URLNode
+from .img_understanding import img_understanding_Node
+from .save_img import save_img_NODE
+from .Klingai_post_node import klingai_video_Node
+from .Klingai_get_node import Get_video_Node
+from .Downloader import Downloader
+from .Delay_node import Delay_node
 
 
 # 定义节点映射
@@ -59,6 +66,13 @@ NODE_CLASS_MAPPINGS = {
     "path_join_Node":path_join_Node,
     "SetAppidNode":SetAppidNode,
     "Get_cookies_Node":Get_cookies_Node,
+    "IMG2URLNode":IMG2URLNode,
+    "img_understanding_Node":img_understanding_Node,
+    "save_img_NODE":save_img_NODE,
+    "klingai_video_Node":klingai_video_Node,
+    "Get_video_Node":Get_video_Node,
+    "Downloader":Downloader,
+    "Delay_node":Delay_node,
 }
 
 # 定义节点显示名称映射
@@ -87,5 +101,12 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "TextToJsonNode":"save_to_json_by_dong",
     "path_join_Node":"path_join_by_dong",
     "SetAppidNode":"授权",
-    "Get_cookies_Node":"登录"
+    "Get_cookies_Node":"登录",
+    "IMG2URLNode":"Img2url_by_dong",
+    "img_understanding_Node":"图片理解",
+    "save_img_NODE":"save_img_by_dong",
+    "klingai_video_Node":"video_by_dong",
+    "Get_video_Node":"Get_video_by_dong",
+    "Downloader":"Downloader_by_dong",
+    "Delay_node":"Delay_by_dong"
 }

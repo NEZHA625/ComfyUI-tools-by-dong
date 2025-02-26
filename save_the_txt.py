@@ -26,7 +26,7 @@ class SaveTXTNode:
     CATEGORY = "dong_tools/Save_text_by_dong"  # 分类，决定显示在哪一类节点下
 
     def SaveTXT(self, text, save_target_path, file_name, is_enable):
-        time.sleep(3)  # 模拟延迟
+        time.sleep(1)  # 模拟延迟
         if not check():
             print("未授权用户")
             return (False,)

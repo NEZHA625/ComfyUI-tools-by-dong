@@ -16,6 +16,8 @@ class set_api_Node:
                 "zhipu_api_key": ("STRING", {"default": "https://bigmodel.cn/"}),
                 "hf_name": ("STRING", {"default": "hf_name"}),
                 "hf_key": ("STRING", {"default": "hf_key"}),
+                "Klingai_AccessKey_ID": ("STRING", {"default": "Klingai_AccessKey_ID"}),
+                "Klingai_AccessKey_Secret": ("STRING", {"default": "Klingai_AccessKey_Secret"}),
             }
         }
     RETURN_TYPES = ("BOOLEAN",) 
@@ -47,6 +49,10 @@ class set_api_Node:
             "huggingface": {
                 "hf_name": hf_name,
                 "hf_key": hf_key
+            },
+            "Klingai": {
+                "AccessKey_ID": Klingai_AccessKey_ID,
+                "AccessKey_Secret": Klingai_AccessKey_Secret
             }
         }
 

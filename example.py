@@ -1,5 +1,6 @@
 import os
 import time
+from check import check
 class exampleNode:
 
     def __init__(self):
@@ -24,8 +25,10 @@ class exampleNode:
     CATEGORY = "dong_tools/example_by_dong" 
 
     def example(self, ,, is_enable):
-        
+        if not check():
+            print("未授权用户")
+            return (False,)
         if not is_enable:
             print("功能已禁用")
-            return (False,)  
+            return (False,) 
 
