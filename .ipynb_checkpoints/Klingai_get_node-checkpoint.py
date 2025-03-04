@@ -3,17 +3,13 @@ import requests
 import json
 import time
 from check import check
-import jwt
-import yaml
-import re
+from Klingai_encode_jwt_token import encode_jwt_token
 
-ComfyUI_tools_by_dong_path = os.path.dirname(os.path.abspath(__file__))
-custom_node_path = os.path.dirname(ComfyUI_tools_by_dong_path)
-ComfyUI_path = os.path.dirname(custom_node_path)
-api_path = os.path.join(ComfyUI_path, "api_by_dong.yaml")
+token = encode_jwt_token()
+print(token)
 
 class Get_video_Node:
-        
+
     def __init__(self):
         pass
 
@@ -39,38 +35,13 @@ class Get_video_Node:
     CATEGORY = "dong_tools/get_video_by_dong" 
 
     def get_video(self, task_id, task_type, is_enable, Retry_time, Retry_count, Delay_duration):
-        def encode_jwt_token():
-            if not os.path.exists(api_path):
-                return ("NONE")
-                print("api_key未设置")
-                
-            with open(api_path, 'r') as file:
-                api_keys = yaml.safe_load(file)
-        
-            ak = api_keys['Klingai']['AccessKey_ID']
-            sk = api_keys['Klingai']['AccessKey_Secret']
-                
-            headers = {
-                "alg": "HS256",
-                "typ": "JWT"
-            }
-            payload = {
-                "iss": ak,
-                "exp": int(time.time()) + 7200,
-                "nbf": int(time.time()) - 5 
-            }
-            token = jwt.encode(payload, sk, headers=headers)
-            return token
-            
-        token = encode_jwt_token()
-        
         if not check():
             print("未授权用户")
             return (False,)
         if not is_enable:
             print("功能已禁用")
             return (False,) 
-        
+               
         url = f"https://api.klingai.com/v1/videos/{task_type}/{task_id}"
 
         headers = {

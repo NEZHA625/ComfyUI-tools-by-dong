@@ -17,7 +17,7 @@ class TextToJsonNode:
                 "value_1": ("STRING", {"default": "value_1"}),  
                 "file_name": ("STRING", {"default": "file_name"}),
                 "save_path": ("STRING", {"default": "save_path"}),
-                "is_enable": ("BOOLEAN", {"default": True}),
+                "is_enable": ("BOOLEAN", {"default": False}),
             },
             "optional": {
                 "key_2": ("STRING",), 

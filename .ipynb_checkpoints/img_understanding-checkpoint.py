@@ -12,8 +12,6 @@ from torchvision import transforms
 import torch
 import re
 from PIL import Image, PngImagePlugin
-import base64
-from io import BytesIO
 
 ComfyUI_tools_by_dong_path = os.path.dirname(os.path.abspath(__file__))
 custom_node_path = os.path.dirname(ComfyUI_tools_by_dong_path)
@@ -34,7 +32,6 @@ class img_understanding_Node:
                 "prompt": ("STRING", {"default": "Describe this image in detail."}), 
                 "is_enable": ("BOOLEAN", {"default": True}),
                 "domestic": ("BOOLEAN", {"default": True}),
-                "only_base": ("BOOLEAN",{"default": True}),
             },
             "optional": {
                 "image": ("IMAGE",),  
@@ -47,18 +44,7 @@ class img_understanding_Node:
     FUNCTION = "img_understanding" 
     CATEGORY = "dong_tools/img_understanding_by_dong" 
 
-    def img_understanding(self,prompt,is_enable,domestic,only_base,image=None,image_url=""):
-        
-        def image2base64(image):
-            image_single = image[0]
-            image_single = image_single.permute(2, 0, 1)
-            to_pil = transforms.ToPILImage()
-            img = to_pil(image_single)
-            buffered = BytesIO()
-            img.save(buffered, format="png")
-            encoded_string = base64.b64encode(buffered.getvalue()).decode('utf-8')
-            return encoded_string
-            
+    def img_understanding(self,prompt,is_enable,domestic,image=None,image_url=""):
         if not check():
             print("未授权用户")
             return (False,)
@@ -73,7 +59,8 @@ class img_understanding_Node:
         with open(api_path, 'r') as file:
             api_keys = yaml.safe_load(file)
 
-        def image2url(image_):
+
+        def img2url(image_):
             if not os.path.exists(upload_path):
                 os.makedirs(upload_path)
             else:
@@ -149,10 +136,7 @@ class img_understanding_Node:
        
         api_key = api_keys['zhipuqingyan']['api_key']
         if image != None :
-            if only_base:
-                IMG_URL = image2base64(image)
-            else:
-                IMG_URL = image2url(image)
+            IMG_URL = img2url(image)
         elif image_url != "":
             IMG_URL = image_url
         else:

@@ -9,7 +9,7 @@ from .huggingface_upload_node import HuggingFaceUploadNode
 from .url_to_img_node import ImageDownloader  
 from .lora_iterator import LoraIterator
 from .move_by_prefix import FileMoveNode
-from .Data_handle import Data_handle_Node
+from .Input_Detection import InputDetectionNode
 from .rename import RenameNode
 from .Logic_Tools import LogicToolsNode
 from .CategorizeNode import CategorizeNode
@@ -20,7 +20,7 @@ from .A1111_style_Flux import A1111_FLUX_DATA_NODE
 from .TranslateAPI import TranslateAPINode
 from .LibLib_upload import LibLib_upload_Node
 from .folder_iterator import FolderIteratorNODE
-from .DeepSeek_Node import DeepSeek_Node
+from .LLM_Node import LLM_Node
 from .RandomNumbers import RandomNumbersNode
 from .HashCalculations import HashCalculationsNode
 from .Get_json_value import Get_json_value_Node
@@ -37,18 +37,15 @@ from .Klingai_post_node import klingai_video_Node
 from .Klingai_get_node import Get_video_Node
 from .Downloader import Downloader
 from .Delay_node import Delay_node
-from .Dong_Text_Node import Dong_Text_Node
-from .DongShowTextNode import DongShowTextNode
-from .PromptConcatNode import PromptConcatNode
-from .ImageResizeNode import ImageResizeNode
-from .Dong_Pixelate_Node import Dong_Pixelate_Node
 
+
+# 定义节点映射
 NODE_CLASS_MAPPINGS = {
     "HuggingFaceUploadNode": HuggingFaceUploadNode,
     "ImageDownloader": ImageDownloader,
     "LoraIterator": LoraIterator,
     "FileMoveNode": FileMoveNode,
-    "Data_handle_Node": Data_handle_Node,
+    "InputDetectionNode": InputDetectionNode,
     "RenameNode": RenameNode,
     "LogicToolsNode": LogicToolsNode,
     "CategorizeNode": CategorizeNode,
@@ -59,7 +56,7 @@ NODE_CLASS_MAPPINGS = {
     "TranslateAPINode":TranslateAPINode,
     "LibLib_upload_Node":LibLib_upload_Node,    
     "FolderIteratorNODE":FolderIteratorNODE,
-    "DeepSeek_Node":DeepSeek_Node,  
+    "LLM_Node":LLM_Node,  
     "RandomNumbersNode":RandomNumbersNode,
     "HashCalculationsNode":HashCalculationsNode,
     "Get_json_value_Node":Get_json_value_Node,
@@ -76,11 +73,6 @@ NODE_CLASS_MAPPINGS = {
     "Get_video_Node":Get_video_Node,
     "Downloader":Downloader,
     "Delay_node":Delay_node,
-    "Dong_Text_Node":Dong_Text_Node,
-    "DongShowTextNode":DongShowTextNode,
-    "PromptConcatNode":PromptConcatNode,
-    "ImageResizeNode":ImageResizeNode,
-    "Dong_Pixelate_Node":Dong_Pixelate_Node
 }
 
 # 定义节点显示名称映射
@@ -89,7 +81,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "ImageDownloader": "Download_img_by_dong",
     "LoraIterator": "Lora_Iterator_by_dong",
     "FileMoveNode": "Move_files_by_dong",
-    "Data_handle_Node": "Data_handle_by_dong",
+    "InputDetectionNode": "Input_Detection_by_dong",
     "RenameNode": "Rename_by_dong",
     "LogicToolsNode": "Logic_by_dong",
     "CategorizeNode": "Categorized_by_dong",
@@ -100,7 +92,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "TranslateAPINode":"Translate_by_dong",
     "LibLib_upload_Node":"LibLib_upload_by_dong",
     "FolderIteratorNODE":"Folder_Iterator_by_dong",
-    "DeepSeek_Node":"DeepSeek_by_dong",
+    "LLM_Node":"DeepSeek_by_dong",
     "RandomNumbersNode":"Random_Numbers_by_dong",
     "HashCalculationsNode":"Hash_Calculations_by_dong",
     "Get_json_value_Node":"Get_json_value_by_dong",
@@ -116,10 +108,5 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "klingai_video_Node":"video_by_dong",
     "Get_video_Node":"Get_video_by_dong",
     "Downloader":"Downloader_by_dong",
-    "Delay_node":"Delay_by_dong",
-    "Dong_Text_Node":"Text_by_Dong",
-    "DongShowTextNode":"show_text_by_Dong",
-    "PromptConcatNode":"Prompt_ConcatNode_by_Dong",
-    "ImageResizeNode":"Image_Resize_by_Dong",
-    "Dong_Pixelate_Node":"像素化",
+    "Delay_node":"Delay_by_dong"
 }

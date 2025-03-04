@@ -25,7 +25,7 @@ class set_api_Node:
     FUNCTION = "set_api" 
     CATEGORY = "dong_tools/Set_API_by_dong" 
 
-    def set_api(self, baidu_appid_or_secretid, baidu_secret_key, siliconflow_api_key,nvidia_api_key, zhipu_api_key,hf_name,hf_key):
+    def set_api(self, baidu_appid_or_secretid, baidu_secret_key, siliconflow_api_key,nvidia_api_key, zhipu_api_key,hf_name,hf_key,Klingai_AccessKey_ID,Klingai_AccessKey_Secret):
 
         ComfyUI_tools_by_dong_path = os.path.dirname(os.path.abspath(__file__))
         custom_node_path = os.path.dirname(ComfyUI_tools_by_dong_path)

@@ -1,0 +1,6 @@
+playsound
+openai
+selenium
+zhipuai
+imageio
+pytz

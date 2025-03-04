@@ -13,17 +13,17 @@ class CategorizeNode:
         """
         return {
             "required": {
-                "prefix": ("STRING", {"default": "prefix"}),
+                "prefix": ("STRING", {"default": "prefix"}),  # 前缀
                 "source_file_path": ("STRING", {"default": "source_directory"}),
                 "target_folder": ("STRING", {"default": "target_directory"}), 
-                "is_enable": ("BOOLEAN", {"default": True}),
+                "is_enable": ("BOOLEAN", {"default": False}),
             }
         }
 
-    RETURN_TYPES = ("BOOLEAN",) 
-    RETURN_NAMES = ("bool",)  
-    FUNCTION = "Categorized_by_prefix"  
-    CATEGORY = "dong_tools/Categorized_by_dong" 
+    RETURN_TYPES = ("BOOLEAN",)  # 返回类型是布尔值
+    RETURN_NAMES = ("bool",)  # 返回变量名是bool
+    FUNCTION = "Categorized_by_prefix"  # 执行的入口方法
+    CATEGORY = "dong_tools/Categorized_by_dong"  # 分类，决定显示在哪一类节点下
 
     def Categorized_by_prefix(self, prefix, source_file_path, target_folder, is_enable):
         
@@ -35,6 +35,7 @@ class CategorizeNode:
             print("功能已禁用")
             return (False,)
 
+        
         try:
             # 检查源路径是否存在
             if not os.path.exists(source_file_path):
@@ -67,7 +68,3 @@ class CategorizeNode:
         except Exception as e:
             print(f"发生错误: {e}")
             return (False,)
-
-    @classmethod
-    def IS_CHANGED(s):
-        return True

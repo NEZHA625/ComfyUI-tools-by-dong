@@ -12,13 +12,13 @@ class LogicToolsNode:
                 "is_enable": ("BOOLEAN", {"default": False}),  # 启用状态
             },
             "optional": {
-                "B": ("BOOLEAN", {"default": False}),  # 第二个布尔值B，默认True
-                "C": ("BOOLEAN", {"default": False}),  # 第三个布尔值C，默认True
-                "D": ("BOOLEAN", {"default": False}),  # 第四个布尔值D，默认True
-                "E": ("BOOLEAN", {"default": False}),  # 第五个布尔值E，默认True
-                "F": ("BOOLEAN", {"default": False}),  # 第六个布尔值F，默认True
-                "G": ("BOOLEAN", {"default": False}),  # 第七个布尔值G，默认True
-                "H": ("BOOLEAN", {"default": False}),  # 第八个布尔值H，默认True
+                "B": ("BOOLEAN", {"default": True}),  # 第二个布尔值B，默认True
+                "C": ("BOOLEAN", {"default": True}),  # 第三个布尔值C，默认True
+                "D": ("BOOLEAN", {"default": True}),  # 第四个布尔值D，默认True
+                "E": ("BOOLEAN", {"default": True}),  # 第五个布尔值E，默认True
+                "F": ("BOOLEAN", {"default": True}),  # 第六个布尔值F，默认True
+                "G": ("BOOLEAN", {"default": True}),  # 第七个布尔值G，默认True
+                "H": ("BOOLEAN", {"default": True}),  # 第八个布尔值H，默认True
             }
         }
 
