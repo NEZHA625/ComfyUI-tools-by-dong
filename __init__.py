@@ -42,6 +42,10 @@ from .DongShowTextNode import DongShowTextNode
 from .PromptConcatNode import PromptConcatNode
 from .ImageResizeNode import ImageResizeNode
 from .Dong_Pixelate_Node import Dong_Pixelate_Node
+from .find_files_by_extension_Node import find_files_by_extension_Node
+from .Delete_folder_Node import Delete_folder_Node
+from .Notice_Node import Notice_Node
+from .text_replace_node import text_replace_node
 
 NODE_CLASS_MAPPINGS = {
     "HuggingFaceUploadNode": HuggingFaceUploadNode,
@@ -80,7 +84,11 @@ NODE_CLASS_MAPPINGS = {
     "DongShowTextNode":DongShowTextNode,
     "PromptConcatNode":PromptConcatNode,
     "ImageResizeNode":ImageResizeNode,
-    "Dong_Pixelate_Node":Dong_Pixelate_Node
+    "Dong_Pixelate_Node":Dong_Pixelate_Node,
+    "find_files_by_extension_Node":find_files_by_extension_Node,
+    "Delete_folder_Node":Delete_folder_Node,
+    "Notice_Node":Notice_Node,
+    "text_replace_node":text_replace_node,
 }
 
 # 定义节点显示名称映射
@@ -122,4 +130,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "PromptConcatNode":"Prompt_ConcatNode_by_Dong",
     "ImageResizeNode":"Image_Resize_by_Dong",
     "Dong_Pixelate_Node":"像素化",
+    "find_files_by_extension_Node":"find_files_by_extension_by_dong",
+    "Delete_folder_Node":"Delete_folder_by_dong",
+    "Notice_Node":"Notice_by_dong",
+    "text_replace_node":"text_replace_by_dong",
 }

@@ -31,9 +31,7 @@ class save_img_NODE:
             print("功能已禁用")
             return (False,)
             
-        image_path = save_folder
-        
-        image_path = self.get_unique_image_path(save_path, image_name)
+        image_path = self.get_unique_image_path(save_folder, image_name)
 
         try:
             img = image
@@ -42,8 +40,8 @@ class save_img_NODE:
             to_pil = transforms.ToPILImage()
             img = to_pil(image_single)  
             if isinstance(img, Image.Image): 
-                img.save(img_path)
-                print(f"Image saved to {img_path}")
+                img.save(image_path)
+                print(f"Image saved to {image_path}")
             else:
                 img = Image.open(img)
                 image_format = img.format
@@ -52,10 +50,23 @@ class save_img_NODE:
         except Exception as e:
             print(f"An error occurred while saving the image: {e}")
         else:
-            print("Image is None, skipping.")
+            pass
         return (image_path, True, image)
-
+        
+    def sanitize_file_name(self, file_name):
+        """
+        清理文件名中的非法字符，返回一个合法的文件名。
+        """
+        
+        illegal_chars = ['<', '>', ':', '"', '/', '\\', '|', '?', '*']
+        
+        sanitized_name = re.sub(r'[<>:"/\\|?*]', '_', file_name)
+        return sanitized_name
+        
     def get_unique_image_path(self, save_path, image_name):
+        
+        image_name = self.sanitize_file_name(image_name)
+        
         # 确保 image_name 以 .png 结尾
         if not image_name.endswith(".png"):
             image_name += ".png"

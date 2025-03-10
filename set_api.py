@@ -10,7 +10,9 @@ class set_api_Node:
         return {
             "required": {
                 "baidu_appid_or_secretid": ("STRING", {"default": "baidu"}), 
-                "baidu_secret_key": ("STRING", {"default": "baidu"}),  
+                "baidu_secret_key": ("STRING", {"default": "baidu"}),
+                "tencent_appid_or_secretid": ("STRING", {"default": "tencent"}), 
+                "tencent_secret_key": ("STRING", {"default": "tencent"}),
                 "siliconflow_api_key": ("STRING", {"default": "https://siliconflow.cn/zh-cn/"}),
                 "nvidia_api_key": ("STRING", {"default": "https://build.nvidia.com/"}),
                 "zhipu_api_key": ("STRING", {"default": "https://bigmodel.cn/"}),
@@ -25,7 +27,7 @@ class set_api_Node:
     FUNCTION = "set_api" 
     CATEGORY = "dong_tools/Set_API_by_dong" 
 
-    def set_api(self, baidu_appid_or_secretid, baidu_secret_key, siliconflow_api_key,nvidia_api_key, zhipu_api_key,hf_name,hf_key,Klingai_AccessKey_ID,Klingai_AccessKey_Secret):
+    def set_api(self, baidu_appid_or_secretid, tencent_appid_or_secretid, tencent_secret_key, baidu_secret_key, siliconflow_api_key,nvidia_api_key, zhipu_api_key,hf_name,hf_key,Klingai_AccessKey_ID,Klingai_AccessKey_Secret):
 
         ComfyUI_tools_by_dong_path = os.path.dirname(os.path.abspath(__file__))
         custom_node_path = os.path.dirname(ComfyUI_tools_by_dong_path)
@@ -36,6 +38,10 @@ class set_api_Node:
             "baidu_translate": { 
                 "appid_or_secretid": baidu_appid_or_secretid,
                 "secret_key": baidu_secret_key
+            },
+            "tencent_translate": { 
+                "appid_or_secretid": tencent_appid_or_secretid,
+                "secret_key": tencent_secret_key
             },
             "siliconflow": { 
                 "api_key": siliconflow_api_key

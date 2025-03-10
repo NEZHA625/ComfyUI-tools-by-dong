@@ -27,7 +27,7 @@ class Delay_node:
     RETURN_TYPES = ("BOOLEAN",any_type)  # 返回类型是布尔值和任意类型的数据
     RETURN_NAMES = ("bool", "data")  # 返回变量名是bool和data
     FUNCTION = "Delay"  # 执行的入口方法
-    CATEGORY = "dong_tools/Input_Detection_by_dong"  # 分类，决定显示在哪一类节点下
+    CATEGORY = "dong_tools/Delay_by_dong"  # 分类，决定显示在哪一类节点下
 
     def Delay(self, data, delay_time, is_enable):
         if not check():

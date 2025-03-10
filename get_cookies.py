@@ -11,6 +11,7 @@ ComfyUI_path = os.path.dirname(custom_node_path)
 
 # 检查并创建 cookies 文件夹
 cookies_folder = os.path.join(ComfyUI_path, "cookies")
+
 if not os.path.exists(cookies_folder):
     os.makedirs(cookies_folder)
 
@@ -26,8 +27,8 @@ class Get_cookies_Node:
         """
         return {
             "required": {
-                "platform": (["LibLib", "tusi", "runninghub", "kuaishou", "xhs", "douyin", "qq","dewu","shipinghao","civitai", "ins", "tiktok", "pinterest", "twitter"], {"default": "LibLib"}),
-                "time_sleep": ("INT", {"default": "30"}),
+                "platform": (["liblib", "tusi", "runninghub", "kuaishou", "xhs", "douyin", "qq","dewu","shipinghao","civitai", "ins", "tiktok", "pinterest", "twitter"], {"default": "liblib"}),
+                "time_sleep": ("INT", {"default": "40"}),
                 "is_enable": ("BOOLEAN", {"default": True}),
             }
         }
@@ -47,8 +48,8 @@ class Get_cookies_Node:
             return (False,)  # 如果禁用，则返回 False
         
         platform_url = {
-            "LibLib": "https://www.liblib.art",
-            "tusi": "http://tusiart.cn/",
+            "liblib": "https://www.liblib.art",
+            "tusi":"https://tusiart.com/",
             "runninghub": "https://www.runninghub.cn/",
             "kuaishou": "https://cp.kuaishou.com/article/publish/video?origin=www.kuaishou.com",
             "xhs": "https://creator.xiaohongshu.com/login?selfLogout=true",
@@ -62,8 +63,6 @@ class Get_cookies_Node:
             "pinterest": "https://www.pinterest.com/",
             "twitter": "https://x.com/",
         }
-
-        # 确保选定的平台存在
         if platform not in platform_url:
             print(f"平台 {platform} 不支持")
             return (False,)
@@ -77,25 +76,22 @@ class Get_cookies_Node:
 
             # 等待一段时间以确保登录并生成 cookies
             time.sleep(time_sleep)
-            input("按任意键保存 cookies...")
 
             # 获取 cookies
             cookies = driver.get_cookies()
 
-            # 保存 cookies 到文件
             cookies_path = os.path.join(cookies_folder, f"{platform}_cookies.pkl")
             with open(cookies_path, "wb") as f:
                 pickle.dump(cookies, f)
 
-            # 打印 cookies 文件的绝对路径
             absolute_path = os.path.abspath(cookies_path)
             print(f"cookies 文件已保存至: {absolute_path}")
 
         finally:
-            # 关闭浏览器
+            
             driver.quit()
 
-        return True
+        return (True,)
 
     @classmethod
     def IS_CHANGED(cls, platform, is_enable):

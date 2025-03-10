@@ -9,6 +9,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from check import check
+
 class LibLib_upload_Node:
 
     def __init__(self):
@@ -25,9 +26,8 @@ class LibLib_upload_Node:
                 "version_name": ("STRING", {"default": "1.0"}), 
                 "description": ("STRING", {"default": "description"}), 
                 "file_path": ("STRING", {"default": "model_file_path"}), 
-                "loraDes": ("STRING", {"default": "美女"}), 
-                "cookies_file": ("STRING", {"default": "cookies_file_path"}), 
-                "images_path": ("STRING", {"default": "images_path"}), 
+                "loraDes": ("STRING", {"default": "美女"}),        
+                "images_path": ("STRING", {"default": "images_folder_path"}), 
                 "mode":(["sd15","sdxl","flux"], {"default": "flux"}),
                 "timeout_upload_lora": ("INT", {"default": 300}),
                 "timeout_upload_images": ("INT", {"default": 15}),
@@ -40,12 +40,24 @@ class LibLib_upload_Node:
             }
         }
 
-    RETURN_TYPES = ("BOOLEAN","STRING")  # 返回类型是布尔值
-    RETURN_NAMES = ("bool","log")  # 返回变量名是bool
-    FUNCTION = "upload_to_liblib"  # 执行的入口方法
-    CATEGORY = "dong_tools/upload_to_liblib_by_dong"  # 分类，决定显示在哪一类节点下
+    RETURN_TYPES = ("BOOLEAN","STRING","STRING") 
+    RETURN_NAMES = ("bool","log","success_folder") 
+    FUNCTION = "upload_to_liblib" 
+    CATEGORY = "dong_tools/upload_to_liblib_by_dong" 
 
-    def upload_to_liblib(self, model_name,version_name,description, file_path,loraDes,cookies_file,images_path,mode,timeout_upload_lora,timeout_upload_images,time_sleep,allow_download,allow_vip_download,allow_encrypt,allow_exclusive,is_enable):
+    def upload_to_liblib(self, model_name,version_name,description, file_path,loraDes,images_path,mode,timeout_upload_lora,timeout_upload_images,time_sleep,allow_download,allow_vip_download,allow_encrypt,allow_exclusive,is_enable):
+
+        ComfyUI_tools_by_dong_path = os.path.dirname(os.path.abspath(__file__))
+        custom_node_path = os.path.dirname(ComfyUI_tools_by_dong_path)
+        ComfyUI_path = os.path.dirname(custom_node_path)
+        cookies_folder = os.path.join(ComfyUI_path, "cookies")
+        cookies_file_ = os.path.join(cookies_folder, "liblib_cookies.pkl")
+        
+        if os.path.exists(cookies_file_):
+            cookies_file = cookies_file_
+        else:
+            print("登录信息不存在")
+            return (False,"登录信息不存在")
         
         time.sleep(time_sleep)  # 模拟延迟
         if not check():
@@ -65,7 +77,7 @@ class LibLib_upload_Node:
         
         # 打开目标网站
         driver.get('https://www.liblib.art')
-        
+
         # 加载保存的 cookies
         try:
             with open(cookies_file, "rb") as f:
@@ -279,25 +291,32 @@ class LibLib_upload_Node:
         image_files = []
         for file_name in os.listdir(images_path):
             file_path = os.path.join(images_path, file_name)
-            if os.path.isfile(file_path) and file_name.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
+            if os.path.isfile(file_path) and file_name.lower().endswith(('.png', '.gif')):
                 image_files.append(file_path)
+        
         if not image_files:
             print("指定文件夹中没有图片文件")
             return (False, "指定文件夹中没有图片文件")  # 返回一个失败的状态
-
-        image_count = (len(image_files))
+        
+        # 先按照文件类型排序，GIF 在前，然后按照文件名排序
+        image_files = sorted(image_files, key=lambda x: (not x.lower().endswith('.gif'), x.lower()))
+        
+        image_count = len(image_files)
+        
         try:
             file_input = WebDriverWait(driver, time_sleep).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='file']"))
             )  
-            # 将所有图片路径合并成一个字符串，以空格分隔
+            # 将所有图片路径合并成一个字符串，以换行符分隔
             all_images_paths = '\n'.join(image_files)
             # 发送所有图片路径
             file_input.send_keys(all_images_paths)
         except TimeoutException:
             print("文件上传输入框未找到，上传失败")
+        
         # 等待上传完成
         time.sleep(timeout_upload_images)
+
         
         # 18.点击 '发布' 按钮
         publish_button = WebDriverWait(driver, 3).until(
@@ -305,13 +324,14 @@ class LibLib_upload_Node:
         )
         publish_button.click()
         print("点击 '发布' 按钮成功")
-        time.sleep(time_sleep)
+        
         # 16.关闭浏览器
         print(f"成功发布{model_name}共{image_count}张图片")
         # input("按 Enter 键退出并关闭浏览器...")
-        
-        driver.quit()
+        time.sleep(10)
+        # driver.quit()
+        return (True,"success",images_path)
 
     @classmethod
-    def IS_CHANGED(cls,is_enable):
-        return True
+    def IS_CHANGED(self, model_name,version_name,description, file_path,loraDes,images_path,mode,timeout_upload_lora,timeout_upload_images,time_sleep,allow_download,allow_vip_download,allow_encrypt,allow_exclusive,is_enable):
+        return (True,)

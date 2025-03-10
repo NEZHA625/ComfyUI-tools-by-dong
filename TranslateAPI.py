@@ -6,7 +6,11 @@ import requests
 import random
 import re
 import yaml
+import json
+from tencentcloud.common import credential
+from tencentcloud.tmt.v20180321 import tmt_client, models
 from check import check
+
 ComfyUI_tools_by_dong_path = os.path.dirname(os.path.abspath(__file__))
 custom_node_path = os.path.dirname(ComfyUI_tools_by_dong_path)
 ComfyUI_path = os.path.dirname(custom_node_path)
@@ -24,14 +28,14 @@ class TranslateAPINode:
         return {
             "required": {
                 "text": ("STRING", {"default": "source_directory"}), 
-                "platform": (["Baidu", "Tencent"], {"default":"Baidu"}),  
+                "platform": (["Baidu", "Tencent"], {"default":"Tencent"}),  
                 "mode": (["zh_to_en", "en_to_zh"], {"default":"en_to_zh"}),  
                 "is_enable": ("BOOLEAN", {"default": True}),
             }
         }
 
-    RETURN_TYPES = ("BOOLEAN", "STRING", "STRING")  # 返回类型是布尔值
-    RETURN_NAMES = ("bool", "translation", "log")  # 返回变量名是bool
+    RETURN_TYPES = ("BOOLEAN", "STRING")  # 返回类型是布尔值
+    RETURN_NAMES = ("bool", "translation")  # 返回变量名是bool
     FUNCTION = "translate"  # 执行的入口方法
     CATEGORY = "dong_tools/translate_by_dong"  # 分类，决定显示在哪一类节点下
     
@@ -104,15 +108,38 @@ class TranslateAPINode:
             return result["trans_result"][0]["dst"]
     
         def tencent_translate(query, mode):
+            
             appid_or_secretid = api_keys['tencent_translate']['appid_or_secretid']
             secret_key = api_keys['tencent_translate']['secret_key']
-            # print("未完待定，这个以后再写")
-            # return (False,"未完待定，这个以后再写","未完待定，这个以后再写")
+            
+            from_lang, to_lang = mode.split("_to_")
+            
+            try:
+                cred = credential.Credential(appid_or_secretid, secret_key)
+                region = "ap-shanghai" 
+                client = tmt_client.TmtClient(cred, region)
+                req = models.TextTranslateRequest()
+                params = {
+                    "SourceText": query,
+                    "Source": from_lang, 
+                    "Target": to_lang,  
+                    "ProjectId": 0  
+                }
+                req.from_json_string(json.dumps(params))
+            
+                response = client.TextTranslate(req)
+            
+                translated_text = response.TargetText
+                
+                return (translated_text,)
+            
+            except Exception as err:
+                print(f"API 请求失败: {err}")
 
         # 根据平台选择翻译方式
         if platform == "Baidu":
             result = baidu_translate(text, mode)
-            return (True, result, "百度翻译成功")
+            return (True, result)
         if platform == "Tencent":
-            # result = tencent_translate(text, mode)
-            return (False, "未完待定，这个以后再写", "腾讯翻译未完成")
+            result = tencent_translate(text, mode)
+            return (True, result)

@@ -28,7 +28,7 @@ class Get_video_Node:
                 "task_type": ("STRING",),  
                 "is_enable": ("BOOLEAN", {"default": True}),
                 "Retry_time": ("INT", {"default": 30}),
-                "Retry_count": ("INT", {"default": 10}),
+                "Retry_count": ("INT", {"default": 20}),
                 "Delay_duration": ("INT", {"default": 240}),
             }
         }

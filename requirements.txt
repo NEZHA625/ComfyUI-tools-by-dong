@@ -1,6 +1,8 @@
-playsound
 openai
 selenium
 zhipuai
 imageio
 pytz
+scikit-learn
+aria2
+tencentcloud-sdk-python

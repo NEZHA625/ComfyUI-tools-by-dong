@@ -1,60 +1,58 @@
 from check import check
+
 class LogicToolsNode:
     @classmethod
     def INPUT_TYPES(s):
-        """
-        返回节点输入参数的配置。
-        """
         return {
             "required": {
-                "A": ("BOOLEAN", {}),  # 第一个布尔值A
-                "logic_type": (["and", "or"], {"default": "and"}),  # 逻辑类型
-                "is_enable": ("BOOLEAN", {"default": False}),  # 启用状态
+                "A": ("BOOLEAN",), 
+                "logic_type": (["and", "or"],),  
+                "is_enable": ("BOOLEAN",), 
             },
             "optional": {
-                "B": ("BOOLEAN", {"default": False}),  # 第二个布尔值B，默认True
-                "C": ("BOOLEAN", {"default": False}),  # 第三个布尔值C，默认True
-                "D": ("BOOLEAN", {"default": False}),  # 第四个布尔值D，默认True
-                "E": ("BOOLEAN", {"default": False}),  # 第五个布尔值E，默认True
-                "F": ("BOOLEAN", {"default": False}),  # 第六个布尔值F，默认True
-                "G": ("BOOLEAN", {"default": False}),  # 第七个布尔值G，默认True
-                "H": ("BOOLEAN", {"default": False}),  # 第八个布尔值H，默认True
+                "B": ("BOOLEAN",),  
+                "C": ("BOOLEAN",),  
+                "D": ("BOOLEAN",), 
+                "E": ("BOOLEAN",),  
+                "F": ("BOOLEAN",), 
+                "G": ("BOOLEAN",),  
+                "H": ("BOOLEAN",), 
             }
         }
 
-    RETURN_TYPES = ("BOOLEAN",)  # 返回类型是布尔值
-    RETURN_NAMES = ("bool",)  # 返回变量名是bool
+    RETURN_TYPES = ("BOOLEAN",) 
+    RETURN_NAMES = ("bool",)  
+    FUNCTION = "logictools"  
+    CATEGORY = "dong_tools/Logic_by_dong"  
 
-    FUNCTION = "logictools"  # 执行的入口方法
-
-    OUTPUT_NODE = True  # 是否是输出节点
-
-    CATEGORY = "dong_tools/Logic_by_dong"  # 分类，决定显示在哪一类节点下
-
-    def logictools(self, A, B, C, D, E, F, G, H, logic_type="and", is_enable=True):
-        """
-        执行逻辑运算，返回操作结果。
-        """
-        print(f"A为{A}, B为{B}, C为{C}, D为{D}, E为{E}, F为{F}, G为{G}, H为{H}, 逻辑类型: {logic_type}")
+    def logictools(self, A, logic_type="and", B=None, C=None, D=None, E=None, F=None, G=None, H=None,  is_enable=False):
+        
         if not check():
             print("未授权用户")
             return (False,)
 
         if not is_enable:
-            return (False,)  # 如果禁用，则返回 False
+            print("功能已禁用")
+            return (False,) 
 
+        # 收集所有有效的布尔值，不参与运算的项不加入列表
+        values = [A]
+        for var in [B, C, D, E, F, G, H]:
+            if var is not None:
+                values.append(var)
+        
+        # 根据逻辑类型执行运算
         if logic_type == "and":
-            result = A and B and C and D and E and F and G and H
-            print(f"AND operation result: {result}")  # 调试输出
+            result = all(values)  # 检查所有有效布尔值是否都为True
+            print(f"A为{A}, B为{B}, C为{C}, D为{D}, E为{E}, F为{F}, G为{G}, H为{H}, 逻辑类型: {logic_type}")
+            print(f"AND operation result: {result}")  
             return (result,)
         elif logic_type == "or":
-            result = A or B or C or D or E or F or G or H
-            print(f"OR operation result: {result}")  # 调试输出
+            result = any(values)  # 检查有效布尔值是否有一个为True
+            print(f"A为{A}, B为{B}, C为{C}, D为{D}, E为{E}, F为{F}, G为{G}, H为{H}, 逻辑类型: {logic_type}")
+            print(f"OR operation result: {result}") 
             return (result,)
 
     @classmethod
-    def IS_CHANGED(cls, A, logic_type, is_enable, B, C, D, E, F, G, H):
-        """
-        检查输入值是否发生变化。
-        """
+    def IS_CHANGED(cls, A, logic_type="and", B=None, C=None, D=None, E=None, F=None, G=None, H=None,  is_enable=False):
         return True

@@ -3,26 +3,28 @@ class PromptConcatNode:
     def INPUT_TYPES(s):
         return {
             "required": {
-                "delimmitor": (["none", "space", "comma"],{"default": "none"}),
+                "delimmitor": (["none", "space", "comma"], {"default": "none"}),
             },
             "optional": {
                 "text1": ("STRING", {"forceInput": True}),
-                "text2": ("STRING", {"forceInput": True}),      
-                "text3": ("STRING", {"forceInput": True}),          
+                "text2": ("STRING", {"forceInput": True}),
+                "text3": ("STRING", {"forceInput": True}),
             }
         }
-    
+
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("text",)
     FUNCTION = "value"
     CATEGORY = "dong_tools/Prompt_concat_by_dong"
 
     def value(self, delimmitor, text1=None, text2=None, text3=None):
+        
         needdelim = False
-        delim = ""
+        a = ""  
+        
         if delimmitor == "space":
             a = " "
-        if delimmitor == "comma":
+        elif delimmitor == "comma":
             a = ", "
 
         concatenated = ""

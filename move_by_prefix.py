@@ -1,23 +1,9 @@
 import os
 import shutil
 import time
+import re
 from check import check
 class FileMoveNode:
-    """
-    文件移动节点
-
-    Class methods
-    -------------
-    INPUT_TYPES (dict):
-        定义节点输入参数的类型。
-    FUNCTION (str):
-        指定执行的入口方法。
-    RETURN_TYPES (tuple):
-        输出的类型。
-    CATEGORY (str):
-        分类。
-    """
-
     def __init__(self):
         pass
 
@@ -40,24 +26,38 @@ class FileMoveNode:
     RETURN_NAMES = ("bool",)  # 返回变量名是bool
     FUNCTION = "move_files_by_prefix"  # 执行的入口方法
     CATEGORY = "dong_tools/move_files_by_dong"  # 分类，决定显示在哪一类节点下
-
+    
+    def sanitize_file_name(self, file_name):
+        """
+        清理文件名中的非法字符，返回一个合法的文件名。
+        """
+        
+        illegal_chars = ['<', '>', ':', '"', '/', '\\', '|', '?', '*']
+        
+        sanitized_name = re.sub(r'[<>:"/\\|?*]', '_', file_name)
+        return sanitized_name
+        
     def move_files_by_prefix(self, filename_prefix, file_from_path, file_to_path,is_copy,is_enable):
         time.sleep(3)  # 模拟延迟
+        
+        filename_prefix = self.sanitize_file_name(filename_prefix)
+        
         if not check():
             print("未授权用户")
             return (False,)
         if not is_enable:
             print("功能已禁用")
             return (False,)  # 如果禁用，则返回 False
-        
+
         else:
             try:
                 # 如果目标路径不存在，则创建该目录
                 if not os.path.exists(file_to_path):
                     os.makedirs(file_to_path)
+                    print(f"创建文件夹{file_to_path}")
 
                 # 获取源路径下所有文件
-                files_to_move = [f for f in os.listdir(file_from_path) if f.startswith(filename_prefix)]
+                files_to_move = [f for f in os.listdir(file_from_path) if os.path.isfile(os.path.join(file_from_path, f)) and f.startswith(filename_prefix)]
 
                 # 如果没有找到符合条件的文件，则返回 False
                 if not files_to_move:
