@@ -131,7 +131,7 @@ class TranslateAPINode:
             
                 translated_text = response.TargetText
                 
-                return (translated_text,)
+                return translated_text
             
             except Exception as err:
                 print(f"API 请求失败: {err}")
