@@ -20,6 +20,7 @@ class set_api_Node:
                 "hf_key": ("STRING", {"default": "hf_key"}),
                 "Klingai_AccessKey_ID": ("STRING", {"default": "Klingai_AccessKey_ID"}),
                 "Klingai_AccessKey_Secret": ("STRING", {"default": "Klingai_AccessKey_Secret"}),
+                "aliyun_bailian_api_key":("STRING", {"default": "https://bailian.console.aliyun.com"}),
             }
         }
     RETURN_TYPES = ("BOOLEAN",) 
@@ -27,7 +28,7 @@ class set_api_Node:
     FUNCTION = "set_api" 
     CATEGORY = "dong_tools/Set_API_by_dong" 
 
-    def set_api(self, baidu_appid_or_secretid, tencent_appid_or_secretid, tencent_secret_key, baidu_secret_key, siliconflow_api_key,nvidia_api_key, zhipu_api_key,hf_name,hf_key,Klingai_AccessKey_ID,Klingai_AccessKey_Secret):
+    def set_api(self, baidu_appid_or_secretid, tencent_appid_or_secretid, tencent_secret_key, baidu_secret_key, siliconflow_api_key,nvidia_api_key, zhipu_api_key,hf_name,hf_key,Klingai_AccessKey_ID,Klingai_AccessKey_Secret,aliyun_bailian_api_key):
 
         ComfyUI_tools_by_dong_path = os.path.dirname(os.path.abspath(__file__))
         custom_node_path = os.path.dirname(ComfyUI_tools_by_dong_path)
@@ -59,6 +60,9 @@ class set_api_Node:
             "Klingai": {
                 "AccessKey_ID": Klingai_AccessKey_ID,
                 "AccessKey_Secret": Klingai_AccessKey_Secret
+            },
+            "aliyun_bailian":{
+                "api_key": aliyun_bailian_api_key
             }
         }
 

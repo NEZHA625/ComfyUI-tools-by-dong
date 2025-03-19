@@ -6,3 +6,4 @@ pytz
 scikit-learn
 aria2
 tencentcloud-sdk-python
+dashscope

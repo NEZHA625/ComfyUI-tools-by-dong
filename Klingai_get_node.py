@@ -29,7 +29,6 @@ class Get_video_Node:
                 "is_enable": ("BOOLEAN", {"default": True}),
                 "Retry_time": ("INT", {"default": 30}),
                 "Retry_count": ("INT", {"default": 20}),
-                "Delay_duration": ("INT", {"default": 240}),
             }
         }
 
@@ -38,7 +37,7 @@ class Get_video_Node:
     FUNCTION = "get_video" 
     CATEGORY = "dong_tools/get_video_by_dong" 
 
-    def get_video(self, task_id, task_type, is_enable, Retry_time, Retry_count, Delay_duration):
+    def get_video(self, task_id, task_type, is_enable, Retry_time, Retry_count):
         def encode_jwt_token():
             if not os.path.exists(api_path):
                 return ("NONE")
@@ -94,8 +93,6 @@ class Get_video_Node:
         if response_json['data']['task_status'] == "succeed":
             video_url = response_json['data']['task_result']['videos'][0]['url']
             return (True, video_url)
-            
-        time.sleep(Delay_duration) 
         
         for _ in range(Retry_count):  # 重试控制
             response_json = get_response_json()
@@ -111,7 +108,6 @@ class Get_video_Node:
                 time.sleep(Retry_time) 
             elif response_json['data']['task_status'] == "submitted":
                 print(f"任务已提交，等待生成...--> task_id:{task_id}")
-                time.sleep(Delay_duration)
                 time.sleep(Retry_time) 
             else:
                 print(f"请求失败，正在重试... 剩余重试次数: {Retry_count - _ - 1}")

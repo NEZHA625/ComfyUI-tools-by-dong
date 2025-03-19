@@ -120,7 +120,7 @@ class TranslateAPINode:
                 client = tmt_client.TmtClient(cred, region)
                 req = models.TextTranslateRequest()
                 params = {
-                    "SourceText": query,
+                    "SourceText": str(query),
                     "Source": from_lang, 
                     "Target": to_lang,  
                     "ProjectId": 0  
@@ -129,7 +129,7 @@ class TranslateAPINode:
             
                 response = client.TextTranslate(req)
             
-                translated_text = response.TargetText
+                translated_text = str(response.TargetText)
                 
                 return translated_text
             

@@ -46,6 +46,12 @@ from .find_files_by_extension_Node import find_files_by_extension_Node
 from .Delete_folder_Node import Delete_folder_Node
 from .Notice_Node import Notice_Node
 from .text_replace_node import text_replace_node
+from .cogview_3_flash_Node import cogview_3_flash_Node
+from .file_analysis_Node import file_analysis_Node
+from .cogvideox_flash_post_Node import cogvideox_flash_post_Node
+from .cogvideox_flash_get_Node import cogvideox_flash_get_Node
+from .Wan21_post_Node import Wan21_post_Node
+from .Wan21_get_Node import Wan21_get_Node
 
 NODE_CLASS_MAPPINGS = {
     "HuggingFaceUploadNode": HuggingFaceUploadNode,
@@ -89,6 +95,12 @@ NODE_CLASS_MAPPINGS = {
     "Delete_folder_Node":Delete_folder_Node,
     "Notice_Node":Notice_Node,
     "text_replace_node":text_replace_node,
+    "cogview_3_flash_Node":cogview_3_flash_Node,
+    "file_analysis_Node":file_analysis_Node,
+    "cogvideox_flash_post_Node":cogvideox_flash_post_Node,
+    "cogvideox_flash_get_Node":cogvideox_flash_get_Node,
+    "Wan21_post_Node":Wan21_post_Node,
+    "Wan21_get_Node":Wan21_get_Node,
 }
 
 # 定义节点显示名称映射
@@ -117,9 +129,9 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "TextToJsonNode":"save_to_json_by_dong",
     "path_join_Node":"path_join_by_dong",
     "SetAppidNode":"授权",
-    "Get_cookies_Node":"登录",
+    "Get_cookies_Node":"登录_by_dong",
     "IMG2URLNode":"Img2url_by_dong",
-    "img_understanding_Node":"图片理解",
+    "img_understanding_Node":"图片理解_by_dong",
     "save_img_NODE":"save_img_by_dong",
     "klingai_video_Node":"video_by_dong",
     "Get_video_Node":"Get_video_by_dong",
@@ -129,9 +141,15 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "DongShowTextNode":"show_text_by_Dong",
     "PromptConcatNode":"Prompt_ConcatNode_by_Dong",
     "ImageResizeNode":"Image_Resize_by_Dong",
-    "Dong_Pixelate_Node":"像素化",
+    "Dong_Pixelate_Node":"像素化_by_dong",
     "find_files_by_extension_Node":"find_files_by_extension_by_dong",
     "Delete_folder_Node":"Delete_folder_by_dong",
     "Notice_Node":"Notice_by_dong",
     "text_replace_node":"text_replace_by_dong",
+    "cogview_3_flash_Node":"cogview_3_flash_by_dong",
+    "file_extract_Node":"file_analysis_by_dong",
+    "cogvideox_flash_post_Node":"cogvideox_flash_post_by_dong",
+    "cogvideox_flash_get_Node":"cogvideox_flash_get_by_dong",
+    "Wan21_post_Node":"Wan21_post_Node",
+    "Wan21_get_Node":"Wan21_get_Node",
 }
