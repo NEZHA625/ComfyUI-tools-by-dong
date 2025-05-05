@@ -25,15 +25,14 @@ class DeepSeek_Node:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "model": (["glm-4-flash", "siliconflow", "nvidia"], {"default": "glm-4-flash"}),  
+                "model": (["glm-4-flash", "siliconflow", "nvidia", "aliyun"], {"default": "siliconflow"}),  
                 "system_prompt": ("STRING", {"default": "default"}),
                 "user_prompt": ("STRING", {"default": "default"}),
-                "is_enable": ("BOOLEAN", {"default": True}),
-                "Translate_mode": ("BOOLEAN", {"default": False}),
             },
             "optional": {
                 "siliconflow_model": (["DeepSeek-R1","DeepSeek-V3","DeepSeek-R1-Distill-Llama-70B","DeepSeek-R1-Distill-Qwen-32B","DeepSeek-R1-Distill-Qwen-14B","free-DeepSeek-R1-Distill-Llama-8B","free-DeepSeek-R1-Distill-Qwen-7B","free-DeepSeek-R1-Distill-Qwen-1.5B"], {"default":"DeepSeek-R1"}),
                 "nvidia_model": (["DeepSeek-R1"], {"default": "DeepSeek-R1"}),
+                "aliyun_model": (["DeepSeek-R1","DeepSeek-V3","free-DeepSeek-R1-Distill-Llama-70B","DeepSeek-R1-Distill-Qwen-32B","DeepSeek-R1-Distill-Qwen-14B","free-DeepSeek-R1-Distill-Llama-8B","DeepSeek-R1-Distill-Qwen-7B","free-DeepSeek-R1-Distill-Qwen-1.5B"], {"default":"DeepSeek-R1"}),
             }
         }
         
@@ -42,13 +41,13 @@ class DeepSeek_Node:
     FUNCTION = "LLM"
     CATEGORY = "dong_tools/DeepSeek_by_dong"  
 
-    def LLM(self, model, system_prompt, user_prompt, is_enable, Translate_mode,siliconflow_model, nvidia_model):
+    def LLM(self, model, system_prompt, user_prompt, siliconflow_model, nvidia_model, aliyun_model):
         if not check():
             print("未授权用户")
             return (False,)
         
-        if not is_enable:
-            return "功能已禁用"
+        # if not is_enable:
+        #     return (False,"功能已禁用")
     
         if not os.path.exists(api_path):
             print("api_key未设置")
@@ -59,8 +58,8 @@ class DeepSeek_Node:
             
         if system_prompt == "default":
             system_prompt = "你是一个乐于解答各种问题的助手，你的任务是为用户提供专业、准确、有见地的建议。"            
-        if Translate_mode:
-            system_prompt = "你是一个翻译专家，如果我给你的是中文，请你将它翻译成地道的英文，如果我给你的是英文，翻译成地道的中文。"
+        # if Translate_mode:
+        #     system_prompt = "你是一个翻译专家，如果我给你的是中文，请你将它翻译成地道的英文，如果我给你的是英文，翻译成地道的中文。"
 
         def glm_4_flash():
             api_key = api_keys['zhipuqingyan']['api_key']
@@ -141,7 +140,7 @@ class DeepSeek_Node:
             )
             
             response_data=(completion.choices[0].message.content)
-            print(response_data)
+            # print(response_data)
             
             pattern = r'<think>(.*?)</think>'
             matches = re.findall(pattern, response_data, flags=re.DOTALL)
@@ -154,15 +153,44 @@ class DeepSeek_Node:
             use_token = completion.usage.total_tokens
             print(f"\n使用token数：{use_token}\n")
             
-            unswer_content = re.sub(pattern, '', response_data, flags=re.DOTALL).lstrip('\n')
-            return unswer_content
+            answer_content = re.sub(pattern, '', response_data, flags=re.DOTALL).lstrip('\n')
+            return answer_content
+
+        def aliyun():
+            nonlocal user_prompt, system_prompt
+            api_key = api_keys['aliyun_bailian']['api_key']
+            
+            model_to_use = aliyun_model 
+            model_to_use = model_to_use.replace('free-', '')
+            select_model = model_to_use.lower()
+            print("\n"+select_model)
+            user_prompt = system_prompt+"\n"+ user_prompt
+
+            client = OpenAI(
+              base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+              api_key = api_key
+            )
+            
+            completion = client.chat.completions.create(
+              model=select_model,
+              messages=[{"role": "user", "content": user_prompt}],
+              stream=False,
+            )
+    
+            think_content = completion.choices[0].message.reasoning_content
+            print(f"\nThink:\n{think_content}")
+            
+            answer_content = completion.choices[0].message.content
+            return answer_content
             
         if model == "glm-4-flash":
             return (True, glm_4_flash())
         elif model == "siliconflow":
             return (True, siliconflow())
         elif model == "nvidia":
-            return (True, nvidia())       
+            return (True, nvidia())  
+        elif model == "aliyun":
+            return (True, aliyun())
         else:
             return (False, "不支持的模型类型")
             

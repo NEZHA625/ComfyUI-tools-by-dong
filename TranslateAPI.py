@@ -19,33 +19,31 @@ api_path = os.path.join(ComfyUI_path, "api_by_dong.yaml")
 class TranslateAPINode:
     def __init__(self):
         pass
-
+        
     @classmethod
     def INPUT_TYPES(s):
-        """
-        返回节点输入参数的配置。
-        """
         return {
             "required": {
-                "text": ("STRING", {"default": "source_directory"}), 
+                "text": ("STRING", {"default": "text"}), 
                 "platform": (["Baidu", "Tencent"], {"default":"Tencent"}),  
                 "mode": (["zh_to_en", "en_to_zh"], {"default":"en_to_zh"}),  
                 "is_enable": ("BOOLEAN", {"default": True}),
             }
         }
 
-    RETURN_TYPES = ("BOOLEAN", "STRING")  # 返回类型是布尔值
-    RETURN_NAMES = ("bool", "translation")  # 返回变量名是bool
-    FUNCTION = "translate"  # 执行的入口方法
-    CATEGORY = "dong_tools/translate_by_dong"  # 分类，决定显示在哪一类节点下
+    RETURN_TYPES = ("BOOLEAN", "STRING")  
+    RETURN_NAMES = ("bool", "translation")
+    FUNCTION = "translate"  
+    CATEGORY = "dong_tools/translate_by_dong"  
     
     def translate(self, text, platform, mode, is_enable):
         if not check():
             print("未授权用户")
             return (False,)
+            
         if not is_enable:
-            return (False, "wrong", "功能已禁用")  # 如果禁用，则返回 False
-
+            return (False, "wrong", "功能已禁用") 
+            
         if not os.path.exists(api_path):
             print("api_key未设置")
             return (False, "api_key未设置", "api_key未设置，请使用set_api节点设置api") 
@@ -54,28 +52,14 @@ class TranslateAPINode:
             api_keys = yaml.safe_load(file)
 
         def remove_empty_lines_and_merge(text):
-            # 删除所有空行，并将所有文本合并成一行
             return " ".join([line.strip() for line in text.splitlines() if line.strip() != ""])
 
-        # 示例使用
         text = remove_empty_lines_and_merge(text)
 
-        
         def baidu_translate(query, mode):
-            """
-            使用百度翻译API进行翻译
-            :param appid: 百度翻译API的APPID
-            :param secret_key: 百度翻译API的密钥
-            :param query: 待翻译的文本
-            :param mode: 翻译模式（如zh_to_en）
-            :return: 翻译结果（字典格式）
-            """
             appid_or_secretid = api_keys['baidu_translate']['appid_or_secretid']
             secret_key = api_keys['baidu_translate']['secret_key']
-            
-            # 生成随机数 salt
-            salt = str(random.randint(32768, 65536))  # 随机数范围在[32768, 65536]
-            
+            salt = str(random.randint(32768, 65536))  
             # 拼接字符串1，格式：appid + q + salt + 密钥
             query_utf8 = query.encode('utf-8')  # 待翻译文本需要编码为utf-8
             # sign_str = appid_or_secretid + query_utf8.decode('utf-8') + salt + secret_key
@@ -86,11 +70,11 @@ class TranslateAPINode:
         
             # 构造请求的URL
             base_url = "https://fanyi-api.baidu.com/api/trans/vip/translate"
-            from_lang, to_lang = mode.split("_to_")  # 从模式中提取源语言和目标语言
+            from_lang, to_lang = mode.split("_to_") 
             params = {
                 "q": query,
-                "from": from_lang,  # 源语言（如zh）
-                "to": to_lang,      # 目标语言（如en）
+                "from": from_lang,  
+                "to": to_lang,  
                 "appid": appid_or_secretid,
                 "salt": salt,
                 "sign": sign
@@ -99,44 +83,50 @@ class TranslateAPINode:
             response = requests.get(base_url, params=params)
             if response.status_code != 200:
                 return {"error_code": "request_error", "error_msg": "Request failed"}
-            result = response.json()  # 转换成JSON格式
+            result = response.json() 
             
             if "error_code" in result:
                 return {"error_code": result["error_code"], "error_msg": result.get("error_msg", "Unknown Error")}
-            
-            # 返回翻译结果
             return result["trans_result"][0]["dst"]
     
-        def tencent_translate(query, mode):
-            
-            appid_or_secretid = api_keys['tencent_translate']['appid_or_secretid']
-            secret_key = api_keys['tencent_translate']['secret_key']
-            
-            from_lang, to_lang = mode.split("_to_")
-            
+        def tencent_translate(query, mode):   
             try:
-                cred = credential.Credential(appid_or_secretid, secret_key)
-                region = "ap-shanghai" 
-                client = tmt_client.TmtClient(cred, region)
-                req = models.TextTranslateRequest()
-                params = {
-                    "SourceText": str(query),
-                    "Source": from_lang, 
-                    "Target": to_lang,  
-                    "ProjectId": 0  
-                }
-                req.from_json_string(json.dumps(params))
-            
-                response = client.TextTranslate(req)
-            
-                translated_text = str(response.TargetText)
-                
-                return translated_text
-            
-            except Exception as err:
-                print(f"API 请求失败: {err}")
+                with open(api_path, 'r') as file:
+                    api_keys = yaml.safe_load(file)
+                appid = api_keys['tencent_translate']['appid_or_secretid']
+                key = api_keys['tencent_translate']['secret_key']
+                print(f"读取到的 appid: {appid}, secret_key: {key}") 
+            except Exception as e:
+                print(f"读取 API 配置失败: {e}")
+                return "error"
 
-        # 根据平台选择翻译方式
+            os.environ["TENCENTCLOUD_SECRET_ID"] = appid
+            os.environ["TENCENTCLOUD_SECRET_KEY"] = key
+
+            try:
+                cred = credential.EnvironmentVariableCredential().get_credential()
+                print(f"凭证加载成功，SecretId: {cred.secret_id}, Secret_key: {cred.secret_key}")
+            except Exception as e:
+                print(f"凭证加载失败: {e}")
+                return "error"
+
+            from_lang, to_lang = mode.split("_to_")
+
+            region = "ap-shanghai"
+            client = tmt_client.TmtClient(cred, region)
+            req = models.TextTranslateRequest()
+            params = {
+                "SourceText": query,  
+                "Source": from_lang,
+                "Target": to_lang,
+                "ProjectId": 0
+            }
+            print(f"请求参数: {json.dumps(params, indent=2)}") 
+            req.from_json_string(json.dumps(params))
+            response = client.TextTranslate(req)
+            translated_text = str(response.TargetText)
+            return translated_text
+
         if platform == "Baidu":
             result = baidu_translate(text, mode)
             return (True, result)

@@ -52,6 +52,14 @@ from .cogvideox_flash_post_Node import cogvideox_flash_post_Node
 from .cogvideox_flash_get_Node import cogvideox_flash_get_Node
 from .Wan21_post_Node import Wan21_post_Node
 from .Wan21_get_Node import Wan21_get_Node
+from .get_video_from_url_Node import get_video_from_url_Node
+from .douyin_remove_watermark_Node import douyin_remove_watermark_Node
+from .AudioPathToAudioNode import AudioPathToAudioNode
+from .AudioDurationNode import AudioDurationNode
+from .img2url_v2_Node import img2url_v2_Node
+from .bailian_model_select_Node import bailian_model_select_Node
+from .DownloadNode import DownloadNode
+from .INTNODE import INTNODE
 
 NODE_CLASS_MAPPINGS = {
     "HuggingFaceUploadNode": HuggingFaceUploadNode,
@@ -101,6 +109,14 @@ NODE_CLASS_MAPPINGS = {
     "cogvideox_flash_get_Node":cogvideox_flash_get_Node,
     "Wan21_post_Node":Wan21_post_Node,
     "Wan21_get_Node":Wan21_get_Node,
+    "get_video_from_url_Node":get_video_from_url_Node,
+    "douyin_remove_watermark_Node":douyin_remove_watermark_Node,
+    "AudioPathToAudioNode":AudioPathToAudioNode,
+    "AudioDurationNode":AudioDurationNode,
+    "img2url_v2_Node":img2url_v2_Node,
+    "bailian_model_select_Node":bailian_model_select_Node,
+    "DownloadNode":DownloadNode,
+    "INTNODE":INTNODE,
 }
 
 # 定义节点显示名称映射
@@ -137,7 +153,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Get_video_Node":"Get_video_by_dong",
     "Downloader":"Downloader_by_dong",
     "Delay_node":"Delay_by_dong",
-    "Dong_Text_Node":"Text_by_Dong",
+    "Dong_Text_Node":"文本",
     "DongShowTextNode":"show_text_by_Dong",
     "PromptConcatNode":"Prompt_ConcatNode_by_Dong",
     "ImageResizeNode":"Image_Resize_by_Dong",
@@ -150,6 +166,14 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "file_extract_Node":"file_analysis_by_dong",
     "cogvideox_flash_post_Node":"cogvideox_flash_post_by_dong",
     "cogvideox_flash_get_Node":"cogvideox_flash_get_by_dong",
-    "Wan21_post_Node":"Wan21_post_Node",
-    "Wan21_get_Node":"Wan21_get_Node",
+    "Wan21_post_Node":"Wan21_post_Node_by_dong",
+    "Wan21_get_Node":"Wan21_get_Node_by_dong",
+    "get_video_from_url_Node":"get_video_from_url_by_dong",
+    "douyin_remove_watermark_Node":"抖音去水印_by_dong",
+    "AudioPathToAudioNode":"AudioPathToAudioNode_by_dong",
+    "AudioDurationNode":"AudioDurationNode_by_dong",
+    "img2url_v2_Node":"img2url_v2_by_dong",
+    "bailian_model_select_Node":"bailian_model_select_by_dong",
+    "DownloadNode":"模型下载器",
+    "INTNODE":"INT_by_dong",
 }
