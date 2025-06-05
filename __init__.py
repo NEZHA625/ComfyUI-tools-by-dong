@@ -59,7 +59,10 @@ from .AudioDurationNode import AudioDurationNode
 from .img2url_v2_Node import img2url_v2_Node
 from .bailian_model_select_Node import bailian_model_select_Node
 from .DownloadNode import DownloadNode
+from .CountFilesFromFolderNode import CountFilesFromFolderNode
+from .GetImageListFromFloderNode import GetImageListFromFloderNode
 from .INTNODE import INTNODE
+
 
 NODE_CLASS_MAPPINGS = {
     "HuggingFaceUploadNode": HuggingFaceUploadNode,
@@ -116,6 +119,8 @@ NODE_CLASS_MAPPINGS = {
     "img2url_v2_Node":img2url_v2_Node,
     "bailian_model_select_Node":bailian_model_select_Node,
     "DownloadNode":DownloadNode,
+    "CountFilesFromFolderNode":CountFilesFromFolderNode,
+    "GetImageListFromFloderNode":GetImageListFromFloderNode,
     "INTNODE":INTNODE,
 }
 
@@ -175,5 +180,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "img2url_v2_Node":"img2url_v2_by_dong",
     "bailian_model_select_Node":"bailian_model_select_by_dong",
     "DownloadNode":"模型下载器",
+    "CountFilesFromFolderNode":"CountFiles_by_Dong",
+    "GetImageListFromFloderNode":"GetImageListFromFloder_by_dong",
     "INTNODE":"INT_by_dong",
 }

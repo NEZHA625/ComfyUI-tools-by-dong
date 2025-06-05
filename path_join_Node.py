@@ -46,10 +46,14 @@ class path_join_Node:
         file_path = os.path.join(folder_path, file_name)    
         
         if not is_make_dir:   
-            return(True,file_path)
+            return (True, file_path)
         else:
-            os.makedirs(file_path)
-            return(True,file_path)
+            try:
+                os.makedirs(file_path, exist_ok=True)  
+                return (True, file_path)
+            except OSError as e:
+                print(f"创建目录失败: {e}")
+                return (False,"创建目录失败")
 
     @classmethod
     def IS_CHANGED(cls, folder_path,file_name, is_make_dir, is_enable):
