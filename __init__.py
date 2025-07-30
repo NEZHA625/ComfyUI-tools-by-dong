@@ -62,6 +62,7 @@ from .DownloadNode import DownloadNode
 from .CountFilesFromFolderNode import CountFilesFromFolderNode
 from .GetImageListFromFloderNode import GetImageListFromFloderNode
 from .INTNODE import INTNODE
+from .DouBao import doubaoNode
 
 
 NODE_CLASS_MAPPINGS = {
@@ -122,6 +123,7 @@ NODE_CLASS_MAPPINGS = {
     "CountFilesFromFolderNode":CountFilesFromFolderNode,
     "GetImageListFromFloderNode":GetImageListFromFloderNode,
     "INTNODE":INTNODE,
+    "doubaoNode":doubaoNode,
 }
 
 # 定义节点显示名称映射
@@ -183,4 +185,5 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CountFilesFromFolderNode":"CountFiles_by_Dong",
     "GetImageListFromFloderNode":"GetImageListFromFloder_by_dong",
     "INTNODE":"INT_by_dong",
+    "doubaoNode":"doubao",
 }

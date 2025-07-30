@@ -6,7 +6,7 @@ custom_node_path = os.path.dirname(ComfyUI_tools_by_dong_path)
 ComfyUI_path = os.path.dirname(custom_node_path)
 Authorization_path = os.path.join(ComfyUI_path, "Authorization.txt")
 
-def check():
+def check1():
     if not os.path.exists(Authorization_path):
         return False
     a = c()
@@ -16,5 +16,5 @@ def check():
         return True
     else:
         return False
-def check1():
+def check():
     return True

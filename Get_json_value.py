@@ -47,7 +47,7 @@ class Get_json_value_Node:
             except FileNotFoundError:
                 return (False, "文件未找到")
             except json.JSONDecodeError:
-                return (False, "文件内容不是有效的JSON格式")
+                return (False,json_text_or_path)
             
             # 根据key取得对应的值
             if key in json_data:
@@ -79,9 +79,9 @@ class Get_json_value_Node:
                         # 尝试解析提取的JSON
                         json_data = json.loads(json_text_or_path)
                     except json.JSONDecodeError:
-                        return (False, "传入的文本格式错误，无法解析为JSON")
+                        return (False,json_text_or_path)
                 else:
-                    return (False, "传入的文本既不是有效的JSON格式，也无法深度解析为JSON")
+                    return (False,json_text_or_path)
 
             # 根据key取得对应的值
             if key in json_data:

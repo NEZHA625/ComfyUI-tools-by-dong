@@ -7,3 +7,4 @@ scikit-learn
 aria2
 tencentcloud-sdk-python
 dashscope
+volcengine-python-sdk[ark]
