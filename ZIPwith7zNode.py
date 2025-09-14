@@ -1,7 +1,8 @@
 import os
 import subprocess
-import time
+import shutil
 from check import check
+
 class ZIPwith7zNode:
 
     def __init__(self):
@@ -9,75 +10,111 @@ class ZIPwith7zNode:
 
     @classmethod
     def INPUT_TYPES(cls):
-        """
-        返回节点输入参数的配置。
-        """
+        """返回节点输入参数配置"""
         return {
             "required": {
-                "source_file_path": ("STRING", {"default": "source_directory"}),  # 源路径
-                "target_file_path": ("STRING", {"default": "target_directory"}),  # 目标路径
-                "zip_name": ("STRING", {"default": "zip_name"}),  # 压缩包名称
+                "source_file_path": ("STRING",),  # 源路径
+                "target_file_path": ("STRING",),  # 目标路径
+                "zip_name": ("STRING",),  # 压缩包名称
                 "is_delete_source": ("BOOLEAN", {"default": False}),  # 是否删除源文件
                 "is_enable": ("BOOLEAN", {"default": False}),  # 功能开关
             }
         }
 
-    RETURN_TYPES = ("BOOLEAN",)  # 返回类型是布尔值
-    RETURN_NAMES = ("bool",)  # 返回变量名是bool
-    FUNCTION = "ZIPwith7z"  # 执行的入口方法
-    CATEGORY = "dong_tools/ZIP_by_dong"  # 分类，决定显示在哪一类节点下
+    # 增加返回压缩包路径
+    RETURN_TYPES = ("BOOLEAN", "STRING",)
+    RETURN_NAMES = ("bool", "zip_file_path",)
+    FUNCTION = "ZIPwith7z"
+    CATEGORY = "dong_tools/ZIP_by_dong"
 
     def ZIPwith7z(self, source_file_path, target_file_path, zip_name, is_delete_source, is_enable):
-        time.sleep(3)  # 模拟延迟
+        log_prefix = "[ZIPwith7z]"
+
+        # 授权检查
         if not check():
-            print("未授权用户")
-            return (False,)
+            print(f"{log_prefix} 未授权用户")
+            return (False, "")
+
         if not is_enable:
-            print("功能已禁用")
-            return (False,)  # 如果禁用，则返回 False
+            print(f"{log_prefix} 功能已禁用")
+            return (False, "")
 
-        # 检查源文件夹路径是否存在
+        # 源路径检查
         if not os.path.exists(source_file_path):
-            print(f"源文件路径不存在: {source_file_path}")
-            return (False,)
-
-        # 检查目标路径是否存在，不存在则创建
-        if not os.path.exists(target_file_path):
-            os.makedirs(target_file_path)
-            print(f"目标文件夹创建成功: {target_file_path}")
-
-        # 如果 zip_name 是路径，提取最后的文件夹名称作为压缩包名称
-        if os.path.isdir(zip_name):
-            zip_name = os.path.basename(os.path.normpath(zip_name))
-
-        # 设置压缩包完整路径
-        zip_file_path = os.path.join(target_file_path, f"{zip_name}.zip")
-
-        # 使用7z命令进行压缩
+            print(f"{log_prefix} 源文件路径不存在: {source_file_path}")
+            return (False, "")
+            
+        if not target_file_path or target_file_path.strip() == "":
+            target_file_path = source_file_path
+            
+        # 目标路径检查/创建
         try:
-            subprocess.run(
-                ["7z", "a", "-tzip", zip_file_path, source_file_path],
-                check=True
-            )
-            print(f"压缩完成: {zip_file_path}")
-        except subprocess.CalledProcessError as e:
-            print(f"压缩失败: {e}")
-            return (False,)
+            os.makedirs(target_file_path, exist_ok=True)
+        except Exception as e:
+            print(f"{log_prefix} 创建目标文件夹失败: {e}")
+            return (False, "")
 
-        # 如果is_delete_source为True，删除整个源文件夹
+        # 压缩包名称处理
+        if not zip_name or zip_name.strip() == "":
+            zip_name = os.path.basename(os.path.normpath(source_file_path)) or "archive"
+
+        zip_file_path = os.path.abspath(os.path.join(target_file_path, f"{zip_name}.zip"))
+
+        # 判断是否需要排除压缩包自身
+        exclude_arg = []
+        if os.path.abspath(source_file_path) == os.path.abspath(target_file_path):
+            exclude_arg = [f"-x!{os.path.basename(zip_file_path)}"]
+
+        # 调用 7z 压缩（实时打印输出 + 排除 zip 文件自身）
+        try:
+            process = subprocess.Popen(
+                ["7z", "a", "-tzip", zip_file_path, source_file_path] + exclude_arg,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1,
+                universal_newlines=True
+            )
+
+            # 实时读取 7z 输出并打印
+            for line in process.stdout:
+                if line.strip():
+                    print(f"{log_prefix} {line.strip()}")
+
+            process.wait()
+            if process.returncode != 0:
+                print(f"{log_prefix} 压缩失败，错误码: {process.returncode}")
+                return (False, "")
+
+            print(f"{log_prefix} 压缩完成: {zip_file_path}")
+
+        except FileNotFoundError:
+            print(f"{log_prefix} 未找到 7z 命令，请确认已安装并加入系统 PATH")
+            return (False, "")
+        except Exception as e:
+            print(f"{log_prefix} 压缩过程异常: {e}")
+            return (False, "")
+
+        # 删除源文件/文件夹（保留压缩包）
         if is_delete_source:
             try:
                 if os.path.isdir(source_file_path):
-                    import shutil
-                    shutil.rmtree(source_file_path)  # 删除整个文件夹及其内容
-                    print(f"源文件夹及其内容已删除: {source_file_path}")
+                    for item in os.listdir(source_file_path):
+                        item_path = os.path.join(source_file_path, item)
+                        # 跳过压缩包本身
+                        if os.path.abspath(item_path) == os.path.abspath(zip_file_path):
+                            continue
+                        if os.path.isdir(item_path):
+                            shutil.rmtree(item_path)
+                        else:
+                            os.remove(item_path)
+                    print(f"{log_prefix} 源目录内容已删除（保留压缩包）: {source_file_path}")
                 else:
-                    os.remove(source_file_path)  # 如果是单个文件则删除文件
-                    print(f"源文件删除成功: {source_file_path}")
+                    if os.path.abspath(source_file_path) != os.path.abspath(zip_file_path):
+                        os.remove(source_file_path)
+                        print(f"{log_prefix} 源文件删除成功: {source_file_path}")
             except Exception as e:
-                print(f"删除源文件失败: {e}")
-                return (False,)
+                print(f"{log_prefix} 删除源文件失败: {e}")
+                return (False, "")
 
-
-        return (True,)
-
+        return (True, zip_file_path)

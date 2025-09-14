@@ -1,0 +1,124 @@
+import os
+import random
+import torch
+import numpy as np
+from PIL import Image, ImageOps, ImageSequence
+
+def pillow(func, *args, **kwargs):
+    try:
+        return func(*args, **kwargs)
+    except Exception as e:
+        print(f"Pillow Error: {e}")
+        return None
+
+class image_iterator:
+    def __init__(self):
+        self.index = 0
+        self.record = 0
+        self.path = None
+        self.image_files = []
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "folder_path": ("STRING", {"default": ""}),
+                "is_enable": ("BOOLEAN", {"default": True}),
+                "is_reload": ("BOOLEAN", {"default": False}),
+                "iterator_mode": (["sequential", "random", "Infinite", "sequential_flagout"], {"default": "sequential"}),
+            }
+        }
+
+    RETURN_TYPES = ("IMAGE", "BOOLEAN")
+    RETURN_NAMES = ("image", "is_end")
+    FUNCTION = "file"
+    CATEGORY = "dong_tools/image_iterator_by_dong"
+
+    def load_images(self, folder_path):
+        """递归收集文件夹及子文件夹下的所有图片"""
+        image_files = []
+        for root, _, files in os.walk(folder_path):
+            for f in files:
+                if f.lower().endswith((
+                    ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".tif", ".webp", ".svg", ".ico", ".raw"
+                )):
+                    image_files.append(os.path.join(root, f))
+
+        # 按修改时间排序
+        image_files = sorted(image_files, key=lambda x: os.path.getmtime(x))
+        return image_files
+
+    def file(self, folder_path, iterator_mode, is_enable=True, is_reload=False):
+        flag_is_end = False
+        if not is_enable:
+            return (None, flag_is_end)
+
+        # 如果路径改变或者强制刷新，重新加载文件列表
+        if self.path != folder_path or is_reload:
+            self.index = 0
+            self.path = folder_path
+            self.image_files = self.load_images(folder_path)
+
+        if not self.image_files:
+            return (None, flag_is_end)
+
+        # 越界处理
+        if self.index >= len(self.image_files):
+            self.index = 0
+            if iterator_mode == "sequential":
+                # 顺序模式，读完后直接中断
+                return (None, True)
+
+        if self.index == len(self.image_files) - 1 and iterator_mode == "sequential_flagout":
+            flag_is_end = True
+
+        # 读取图像
+        image_path = self.image_files[self.index]
+        img = pillow(Image.open, image_path)
+        if img is None:
+            return (None, flag_is_end)
+
+        output_images = []
+        w, h = None, None
+        excluded_formats = ["MPO"]
+
+        for i in ImageSequence.Iterator(img):
+            i = pillow(ImageOps.exif_transpose, i)
+
+            if i.mode == "I":
+                i = i.point(lambda i: i * (1 / 255))
+            image = i.convert("RGB")
+
+            if len(output_images) == 0:
+                w, h = image.size
+
+            if image.size != (w, h):
+                continue
+
+            image = np.array(image).astype(np.float32) / 255.0
+            image = torch.from_numpy(image)[None,]
+
+            if "A" in i.getbands():
+                mask = np.array(i.getchannel("A")).astype(np.float32) / 255.0
+                mask = 1.0 - torch.from_numpy(mask)
+            else:
+                mask = torch.zeros((64, 64), dtype=torch.float32, device="cpu")
+
+            output_images.append(image)
+
+        if len(output_images) > 1 and img.format not in excluded_formats:
+            output_image = torch.cat(output_images, dim=0)
+        else:
+            output_image = output_images[0]
+
+        if iterator_mode in ["sequential", "Infinite", "sequential_flagout"]:
+            self.index += 1
+        elif iterator_mode == "random":
+            self.index = random.randint(0, len(self.image_files) - 1)
+
+        return (output_image, flag_is_end)
+
+    @classmethod
+    def IS_CHANGED(self, s):
+        self.record = self.index
+        return self.record

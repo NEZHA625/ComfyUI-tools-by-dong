@@ -1,0 +1,130 @@
+import os
+import time
+from check import check
+import shutil
+import requests
+from huggingface_hub import HfApi
+from urllib3.util.retry import Retry
+import yaml
+from requests.adapters import HTTPAdapter
+from torchvision import transforms
+import torch
+import re
+from PIL import Image, PngImagePlugin
+import base64
+from io import BytesIO
+
+ComfyUI_tools_by_dong_path = os.path.dirname(os.path.abspath(__file__))
+custom_node_path = os.path.dirname(ComfyUI_tools_by_dong_path)
+ComfyUI_path = os.path.dirname(custom_node_path)
+api_path = os.path.join(ComfyUI_path, "api_by_dong.yaml")
+
+class GLM_Node:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "optional": {
+                "image": ("IMAGE",),
+            },
+            "required": {
+                "prompt": ("STRING", {"multiline": True, "default": "详细描述该图片"}),
+            }
+        }
+
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("text",)
+    FUNCTION = "GLM"
+    CATEGORY = "dong_tools/img_understanding_by_v2_by_dong"
+
+    def GLM(self, image=None, prompt=""):
+        def image2base64(image):
+            image_single = image[0]
+            image_single = image_single.permute(2, 0, 1)
+            to_pil = transforms.ToPILImage()
+            img = to_pil(image_single)
+            buffered = BytesIO()
+            img.save(buffered, format="png")
+            return base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+        if not check():
+            return ("未授权用户",)
+
+        if not os.path.exists(api_path):
+            return ("api_key未设置，请使用set_api节点设置api",)
+
+        with open(api_path, "r") as file:
+            api_keys = yaml.safe_load(file)
+        api_key = api_keys["siliconflow"]["api_key"]
+
+        base64_image = None
+        if image is not None:
+            base64_image = image2base64(image)
+
+        def request_with_retry(func, retries=3, delay=5):
+            for i in range(retries):
+                try:
+                    return func()
+                except Exception as e:
+                    print(f"请求异常: {e}，第{i+1}次重试...")
+                    time.sleep(delay)
+            return None
+
+        def siliconflow():
+            def call():
+                url = "https://api.siliconflow.cn/v1/chat/completions"
+                model = "THUDM/GLM-4.1V-9B-Thinking"
+
+                content = []
+                if base64_image:
+                    content.append({
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/png;base64,{base64_image}",
+                            "detail": "high"
+                        }
+                    })
+                content.append({"type": "text", "text": prompt})
+
+                payload = {
+                    "model": model,
+                    "messages": [{"role": "user", "content": content}],
+                    "stream": False,
+                    "max_tokens": 8192,
+                    "stop": ["null"],
+                    "temperature": 0.7,
+                    "top_p": 0.7,
+                    "top_k": 50,
+                    "frequency_penalty": 0.5,
+                    "n": 1,
+                    "response_format": {"type": "text"},
+                }
+                headers = {
+                    "Authorization": "Bearer " + api_key,
+                    "Content-Type": "application/json"
+                }
+
+                response = requests.post(url, json=payload, headers=headers, timeout=60)
+                response.raise_for_status()
+                response_json = response.json()
+
+                reasoning_content = response_json["choices"][0]["message"].get("reasoning_content", "")
+                if reasoning_content:
+                    print(f"\nthink:\n{reasoning_content}\n")
+                use_token = response_json.get("usage", {}).get("total_tokens", 0)
+                print(f"\n使用token数：{use_token}\n")
+
+                return response_json["choices"][0]["message"]["content"]
+
+            return request_with_retry(call)
+
+        result = siliconflow()
+        if result is None:
+            return ("SiliconFlow 请求失败或超时",)
+        return (result,)
+
+    @classmethod
+    def IS_CHANGED(s):
+        return True

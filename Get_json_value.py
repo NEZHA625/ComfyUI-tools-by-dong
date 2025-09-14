@@ -14,8 +14,8 @@ class Get_json_value_Node:
         """
         return {
             "required": {
-                "json_text_or_path": ("STRING", {"default": "json"}),  # 源路径或JSON文本
-                "key":("STRING", {"default": "key"}),  # 键值
+                "json_text_or_path": ("STRING",),  # 源路径或JSON文本
+                "key":("STRING", {"default": "prompt"}),  # 键值
                 "is_enable": ("BOOLEAN", {"default": True}),  # 是否启用功能
             }
         }

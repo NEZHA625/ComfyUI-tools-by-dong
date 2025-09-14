@@ -15,7 +15,7 @@ class Wan21_post_Node:
                 "model": ("STRING",{"default": "wanx2.1-t2v-turbo"}), 
                 "prompt": ("STRING",),  
                 "prompt_extend": ("BOOLEAN", {"default": False}),
-                "size":(["720*1280","832*1088", "960*960","1088*832","1280*720"],{"default": "720*1280"}),
+                "size":(["720*1280","832*1088", "960*960","1088*832","1280*720","1080*1920","1920*1080","1248*1632","1632*1248","1440*1440"],{"default": "720*1280"}),
                 "duration":("INT",{"default": "5"}),
                 "seeds":("INT",{"default": -1}),
                 "is_enable": ("BOOLEAN", {"default": True}),

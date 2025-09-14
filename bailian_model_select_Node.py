@@ -7,7 +7,7 @@ class bailian_model_select_Node:
         return {
             "required": {
                 "model_name": (
-                    ["wanx2.1-t2v-turbo", "wanx2.1-t2v-plus", "wanx2.1-i2v-turbo", "wanx2.1-i2v-plus", "wanx2.1-kf2v-plus"],
+                    ["wanx2.1-t2v-turbo", "wanx2.1-t2v-plus", "wanx2.1-i2v-turbo", "wanx2.1-i2v-plus", "wanx2.1-kf2v-plus","wan2.2-t2v-plus","wan2.2-i2v-plus"],
                     {"default": "wanx2.1-t2v-turbo"}
                 )
             }
