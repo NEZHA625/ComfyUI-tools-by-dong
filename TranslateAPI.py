@@ -25,7 +25,7 @@ class TranslateAPINode:
         return {
             "required": {
                 "text": ("STRING",{"multiline": True}),
-                "mode": (["zh_to_en", "en_to_zh"], {"default":"en_to_zh"})
+                "mode": (["zh_to_en", "en_to_zh","none"], {"default":"en_to_zh"})
             }
         }
 
@@ -36,6 +36,8 @@ class TranslateAPINode:
     
     def translate(self, text, mode):
         if text == "":
+            return (text,)
+        if mode == "none":
             return (text,)
         if not re.search(r'[A-Za-z]', text) and mode == "en_to_zh":
             return (text,)

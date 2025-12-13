@@ -26,13 +26,14 @@ class DeepSeek_Node:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "model": (["siliconflow", "aliyun"], {"default": "aliyun"}),
+                "model": (["siliconflow", "nvidia", "aliyun"], {"default": "aliyun"}),
                 "system_prompt": ("STRING",),
                 "user_prompt": ("STRING",),
             },
             "optional": {
-                "siliconflow_model": (["free-DeepSeek-R1-0528-Qwen3-8B","free-DeepSeek-R1-Distill-Qwen-7B"], {"default":"free-DeepSeek-R1-0528-Qwen3-8B"}),
-                "aliyun_model": (["free-DeepSeek-R1-Distill-Llama-70B","free-DeepSeek-R1-Distill-Llama-8B","free-DeepSeek-R1-Distill-Qwen-1.5B"], {"default":"free-DeepSeek-R1-Distill-Llama-70B"}),
+                "siliconflow_model": (["DeepSeek-R1","DeepSeek-V3","DeepSeek-R1-Distill-Qwen-32B","DeepSeek-R1-Distill-Qwen-14B","free-DeepSeek-R1-0528-Qwen3-8B","free-DeepSeek-R1-Distill-Qwen-7B","Kimi-K2-Thinking","Kimi-K2-Instruct-0905","Ling-flash-2.0","Ling-mini-2.0"], {"default":"DeepSeek-R1"}),
+                "nvidia_model": (["DeepSeek-R1"], {"default": "DeepSeek-R1"}),
+                "aliyun_model": (["DeepSeek-R1","DeepSeek-V3","free-DeepSeek-R1-Distill-Llama-70B","DeepSeek-R1-Distill-Qwen-32B","DeepSeek-R1-Distill-Qwen-14B","free-DeepSeek-R1-Distill-Llama-8B","DeepSeek-R1-Distill-Qwen-7B","free-DeepSeek-R1-Distill-Qwen-1.5B"], {"default":"DeepSeek-R1"}),
             }
         }
         
@@ -41,7 +42,7 @@ class DeepSeek_Node:
     FUNCTION = "LLM"
     CATEGORY = "dong_tools/DeepSeek_by_dong"  
 
-    def LLM(self, model, system_prompt, user_prompt, siliconflow_model, aliyun_model):
+    def LLM(self, model, system_prompt, user_prompt, siliconflow_model, nvidia_model, aliyun_model):
         if not check():
             print("未授权用户")
             return (False,)
@@ -72,7 +73,13 @@ class DeepSeek_Node:
                 api_key = api_keys['siliconflow']['api_key'] 
                 url = "https://api.siliconflow.cn/v1/chat/completions"
                 model_to_use = siliconflow_model.replace('free-', '')
-                select_model = "deepseek-ai/" + model_to_use
+                select_model = model_to_use
+                if "DeepSeek" in model_to_use:
+                    select_model = "deepseek-ai/" + model_to_use
+                elif "Kimi" in model_to_use:
+                    select_model = "moonshotai/" + model_to_use
+                elif ("Ring" in model_to_use) or ("Ling" in model_to_use):
+                    select_model = "inclusionAI/" + model_to_use                
                 print("\n"+select_model)
 
                 payload = {
@@ -127,6 +134,41 @@ class DeepSeek_Node:
                 return "SiliconFlow 请求失败或超时"
             return result
 
+        # NVIDIA 调用（流式输出 <think>）
+        def nvidia():
+            def call():
+                api_key = api_keys['nvidia']['api_key']
+                select_model = ("deepseek-ai/" + nvidia_model).lower()
+                print("\n"+select_model)
+
+                client = OpenAI(base_url="https://integrate.api.nvidia.com/v1", api_key=api_key)
+                stream = client.chat.completions.create(
+                    model=select_model,
+                    messages=[{"role": "system", "content": system_prompt},{"role": "user", "content": user_prompt}],
+                    temperature=0.6, top_p=0.7, max_tokens=8192, stream=True  # ✅ 流式
+                )
+
+                final_answer = []
+                print("\nThink:\n")
+                for chunk in stream:
+                    delta = chunk.choices[0].delta
+                    if delta and delta.content:
+                        # 输出前先去掉 think 标签
+                        text = delta.content
+                        think_matches = re.findall(r"<think>(.*?)</think>", text, flags=re.DOTALL)
+                        if think_matches:
+                            print(think_matches[0], end="", flush=True)
+                        else:
+                            final_answer.append(re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL))
+
+                print("\n")
+                return "".join(final_answer).lstrip("\n")
+
+            result = request_with_retry(call)
+            if result is None:
+                return "NVIDIA 请求失败或超时"
+            return result
+
         # 阿里云调用（流式输出 think）
         def aliyun():
             def call():
@@ -159,9 +201,11 @@ class DeepSeek_Node:
                 return "阿里云 请求失败或超时"
             return result
 
-
+        # 根据选择模型返回结果
         if model == "siliconflow":
             return (True, siliconflow())
+        elif model == "nvidia":
+            return (True, nvidia())  
         elif model == "aliyun":
             return (True, aliyun())
         else:

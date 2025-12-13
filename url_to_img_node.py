@@ -139,9 +139,9 @@ class ImageDownloader:
 
 
     def download_image(self, url_or_path, file_name=None, is_enable=True, iterator_mode="sequential"):
-        if url_or_path == "":
-            url_or_path = "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images&fl=mobile"
-        time.sleep(1)
+        # if url_or_path == "":
+        #     url_or_path = "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images&fl=mobile"
+        # time.sleep(1)
         if "http" in url_or_path:
             return self.download_image_from_url(url_or_path, file_name, is_enable)
         else:

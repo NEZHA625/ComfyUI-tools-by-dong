@@ -1,0 +1,91 @@
+import os
+import json
+import base64
+import requests
+import yaml
+import time
+from io import BytesIO
+from PIL import Image
+from torchvision import transforms
+from check import check
+
+ComfyUI_tools_by_dong_path = os.path.dirname(os.path.abspath(__file__))
+custom_node_path = os.path.dirname(ComfyUI_tools_by_dong_path)
+ComfyUI_path = os.path.dirname(custom_node_path)
+api_path = os.path.join(ComfyUI_path, "api_by_dong.yaml")
+
+
+class kie_base64_upload_node:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "image": ("IMAGE",),
+                "upload_path": ("STRING", {"default": "images/base64"}),
+                "file_name": ("STRING", {"default": ""})
+            }
+        }
+
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("file_url",)
+    FUNCTION = "upload_image"
+    CATEGORY = "dong_tools/upload_by_dong"
+
+    def upload_image(self, image, upload_path, file_name):
+        # 授权检查
+        if not check():
+            return ("未授权用户",)
+
+        # API KEY 检查
+        if not os.path.exists(api_path):
+            return ("api_key未设置，请使用set_api节点设置api",)
+
+        with open(api_path, "r") as f:
+            api_keys = yaml.safe_load(f)
+        api_key = api_keys["kie"]["api_key"]
+
+        # 将 tensor/PIL 转 base64
+        def image_to_base64(img_tensor):
+            img_single = img_tensor[0]
+            img_single = img_single.permute(2, 0, 1)
+            pil_img = transforms.ToPILImage()(img_single)
+            buffered = BytesIO()
+            pil_img.save(buffered, format="PNG")
+            return base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+        base64_data = image_to_base64(image)
+
+        # 自动生成文件名，确保带 .png
+        if not file_name:
+            file_name = f"uploaded-{int(time.time() * 1000)}.png"
+        elif not file_name.lower().endswith(".png"):
+            file_name += ".png"
+
+        url = "https://kieai.redpandaai.co/api/file-base64-upload"
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+
+        payload = {
+            "base64Data": base64_data,
+            "uploadPath": upload_path,
+            "fileName": file_name
+        }
+
+        try:
+            response = requests.post(url, headers=headers, data=json.dumps(payload))
+            result = response.json()
+
+            if not result.get("success", False):
+                return (f"上传失败: {result.get('msg','未知错误')}",)
+
+            # 返回下载 URL
+            file_url = result["data"].get("downloadUrl", "")
+            return (file_url,)
+
+        except Exception as e:
+            return (f"网络或解析错误: {str(e)}",)

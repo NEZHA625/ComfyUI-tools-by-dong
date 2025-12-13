@@ -38,13 +38,13 @@ from .Klingai_get_node import Get_video_Node
 from .Downloader import Downloader
 from .Delay_node import Delay_node
 from .Dong_Text_Node import Dong_Text_Node
-from .DongShowTextNode import DongShowTextNode
+# from .DongShowTextNode import DongShowTextNode
 from .PromptConcatNode import PromptConcatNode
 from .ImageResizeNode import ImageResizeNode
 from .Dong_Pixelate_Node import Dong_Pixelate_Node
 from .find_files_by_extension_Node import find_files_by_extension_Node
 from .Delete_folder_Node import Delete_folder_Node
-from .Notice_Node import Notice_Node
+# from .Notice_Node import Notice_Node
 from .text_replace_node import text_replace_node
 from .cogview_3_flash_Node import cogview_3_flash_Node
 from .file_analysis_Node import file_analysis_Node
@@ -53,7 +53,7 @@ from .cogvideox_flash_get_Node import cogvideox_flash_get_Node
 from .Wan21_post_Node import Wan21_post_Node
 from .Wan21_get_Node import Wan21_get_Node
 from .get_video_from_url_Node import get_video_from_url_Node
-from .douyin_remove_watermark_Node import douyin_remove_watermark_Node
+# from .douyin_remove_watermark_Node import douyin_remove_watermark_Node
 from .AudioPathToAudioNode import AudioPathToAudioNode
 from .AudioDurationNode import AudioDurationNode
 from .img2url_v2_Node import img2url_v2_Node
@@ -61,6 +61,7 @@ from .bailian_model_select_Node import bailian_model_select_Node
 from .DownloadNode import DownloadNode
 from .CountFilesFromFolderNode import CountFilesFromFolderNode
 from .GetImageListFromFloderNode import GetImageListFromFloderNode
+from .GetImageListFromFloderNode2 import GetImageListFromFloderNode2
 from .INTNODE import INTNODE
 from .DouBao import doubaoNode
 from .image_iterator import image_iterator
@@ -68,6 +69,16 @@ from .img_understanding_v2 import GLM_Node
 from .save_img_v2 import save_img_v2_NODE
 from .get_image_list import GetRefModelImageListNode
 from .get_text_from_list import get_text_from_list_Node
+from .Check_Vram import checkvram_node
+from .Qwen3VL_30B_A3B_Thinking import Qwen3VL_30_Node
+from .Qwen3VL_235B_A22B_Thinking import Qwen3VL_235_Node
+from .QwenVL import QwenVL_Node
+from .IFEXISTTEXTNODE import IFEXISTTEXTNODE
+from .kie_nano_post_node import kie_nano_post_node
+from .kie_nano_get_node import kie_nano_get_node
+from .kie_base64_upload_node import kie_base64_upload_node
+from .suchuang_nano_post_node import suchuang_nano_post_node
+from .suchuang_get_node import suchuang_get_node
 
 NODE_CLASS_MAPPINGS = {
     "HuggingFaceUploadNode": HuggingFaceUploadNode,
@@ -103,13 +114,13 @@ NODE_CLASS_MAPPINGS = {
     "Downloader":Downloader,
     "Delay_node":Delay_node,
     "Dong_Text_Node":Dong_Text_Node,
-    "DongShowTextNode":DongShowTextNode,
+    # "DongShowTextNode":DongShowTextNode,
     "PromptConcatNode":PromptConcatNode,
     "ImageResizeNode":ImageResizeNode,
     "Dong_Pixelate_Node":Dong_Pixelate_Node,
     "find_files_by_extension_Node":find_files_by_extension_Node,
     "Delete_folder_Node":Delete_folder_Node,
-    "Notice_Node":Notice_Node,
+    # "Notice_Node":Notice_Node,
     "text_replace_node":text_replace_node,
     "cogview_3_flash_Node":cogview_3_flash_Node,
     "file_analysis_Node":file_analysis_Node,
@@ -118,7 +129,7 @@ NODE_CLASS_MAPPINGS = {
     "Wan21_post_Node":Wan21_post_Node,
     "Wan21_get_Node":Wan21_get_Node,
     "get_video_from_url_Node":get_video_from_url_Node,
-    "douyin_remove_watermark_Node":douyin_remove_watermark_Node,
+    # "douyin_remove_watermark_Node":douyin_remove_watermark_Node,
     "AudioPathToAudioNode":AudioPathToAudioNode,
     "AudioDurationNode":AudioDurationNode,
     "img2url_v2_Node":img2url_v2_Node,
@@ -126,6 +137,7 @@ NODE_CLASS_MAPPINGS = {
     "DownloadNode":DownloadNode,
     "CountFilesFromFolderNode":CountFilesFromFolderNode,
     "GetImageListFromFloderNode":GetImageListFromFloderNode,
+    "GetImageListFromFloderNode2":GetImageListFromFloderNode2,
     "INTNODE":INTNODE,
     "doubaoNode":doubaoNode,
     "image_iterator":image_iterator,
@@ -133,12 +145,22 @@ NODE_CLASS_MAPPINGS = {
     "save_img_v2_NODE":save_img_v2_NODE,
     "GetRefModelImageListNode":GetRefModelImageListNode,
     "get_text_from_list_Node":get_text_from_list_Node,
+    "checkvram_node":checkvram_node,
+    "Qwen3VL_30_Node":Qwen3VL_30_Node,
+    "Qwen3VL_235_Node":Qwen3VL_235_Node,
+    "QwenVL_Node":QwenVL_Node,
+    "IFEXISTTEXTNODE":IFEXISTTEXTNODE,
+    "kie_nano_post_node":kie_nano_post_node,
+    "kie_nano_get_node":kie_nano_get_node,
+    "kie_base64_upload_node":kie_base64_upload_node,
+    "suchuang_nano_post_node":suchuang_nano_post_node,
+    "suchuang_get_node":suchuang_get_node,
 }
 
 # 定义节点显示名称映射
 NODE_DISPLAY_NAME_MAPPINGS = {
     "HuggingFaceUploadNode": "HuggingFace_upload_by_dong",
-    "ImageDownloader": "下载图片",
+    "ImageDownloader": "get_image",
     "LoraIterator": "Lora迭代器",
     "FileMoveNode": "移动文件",
     "Data_handle_Node": "数据处理",
@@ -170,13 +192,13 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Downloader":"下载器",
     "Delay_node":"sleep",
     "Dong_Text_Node":"文本",
-    "DongShowTextNode":"展示文本",
+    # "DongShowTextNode":"展示文本",
     "PromptConcatNode":"文本连接",
     "ImageResizeNode":"Image_Resize",
     "Dong_Pixelate_Node":"图片像素化",
     "find_files_by_extension_Node":"find_files_by_extension_by_dong",
     "Delete_folder_Node":"删除文件夹",
-    "Notice_Node":"通知",
+    # "Notice_Node":"通知",
     "text_replace_node":"文本替换",
     "cogview_3_flash_Node":"cogview_3_flash_by_dong",
     "file_extract_Node":"file_analysis_by_dong",
@@ -185,7 +207,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Wan21_post_Node":"Wan21_post_Node_by_dong",
     "Wan21_get_Node":"Wan21_get_Node_by_dong",
     "get_video_from_url_Node":"get_video_from_url_by_dong",
-    "douyin_remove_watermark_Node":"抖音去水印",
+    # "douyin_remove_watermark_Node":"抖音去水印",
     "AudioPathToAudioNode":"从路径到音频",
     "AudioDurationNode":"获取音频时长",
     "img2url_v2_Node":"img2url_v2_by_dong",
@@ -193,6 +215,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "DownloadNode":"模型下载器",
     "CountFilesFromFolderNode":"文件数计算",
     "GetImageListFromFloderNode":"获取图像列表",
+    "GetImageListFromFloderNode2":"获取图像列表2",
     "INTNODE":"INT",
     "doubaoNode":"豆包",
     "image_iterator":"图片递归迭代",
@@ -200,4 +223,14 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "save_img_v2_NODE":"保存图像_v2",
     "GetRefModelImageListNode":"获取图像列表_v2",
     "get_text_from_list_Node":"从列表获取文本",
+    "checkvram_node":"是否低显存",
+    "Qwen3VL_30_Node":"视觉识别_v2",
+    "Qwen3VL_235_Node":"视觉识别_v3",
+    "QwenVL_Node":"视觉识别_Pro",
+    "IFEXISTTEXTNODE":"文字是否存在",
+    "kie_nano_post_node":"nano_post",
+    "kie_nano_get_node":"nano_get",
+    "kie_base64_upload_node":"nano_upload",
+    "suchuang_nano_post_node":"速创_nano_post_node",
+    "suchuang_get_node":"速创_get_node",
 }
