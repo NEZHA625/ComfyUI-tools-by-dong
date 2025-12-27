@@ -74,11 +74,16 @@ from .Qwen3VL_30B_A3B_Thinking import Qwen3VL_30_Node
 from .Qwen3VL_235B_A22B_Thinking import Qwen3VL_235_Node
 from .QwenVL import QwenVL_Node
 from .IFEXISTTEXTNODE import IFEXISTTEXTNODE
-from .kie_nano_post_node import kie_nano_post_node
-from .kie_nano_get_node import kie_nano_get_node
-from .kie_base64_upload_node import kie_base64_upload_node
-from .suchuang_nano_post_node import suchuang_nano_post_node
-from .suchuang_get_node import suchuang_get_node
+# from .kie_nano_post_node import kie_nano_post_node
+# from .kie_nano_get_node import kie_nano_get_node
+# from .kie_base64_upload_node import kie_base64_upload_node
+# from .suchuang_nano_post_node import suchuang_nano_post_node
+# from .suchuang_get_node import suchuang_get_node
+from .nano_banana_node import nano_banana_node
+# from .sora2_node import sora2_node
+from .liblib_auto_video_node import liblib_auto_video_node
+from .sora2_suchuang_node import sora2_suchuang_node
+from .sora2 import sora2
 
 NODE_CLASS_MAPPINGS = {
     "HuggingFaceUploadNode": HuggingFaceUploadNode,
@@ -150,11 +155,16 @@ NODE_CLASS_MAPPINGS = {
     "Qwen3VL_235_Node":Qwen3VL_235_Node,
     "QwenVL_Node":QwenVL_Node,
     "IFEXISTTEXTNODE":IFEXISTTEXTNODE,
-    "kie_nano_post_node":kie_nano_post_node,
-    "kie_nano_get_node":kie_nano_get_node,
-    "kie_base64_upload_node":kie_base64_upload_node,
-    "suchuang_nano_post_node":suchuang_nano_post_node,
-    "suchuang_get_node":suchuang_get_node,
+    # "kie_nano_post_node":kie_nano_post_node,
+    # "kie_nano_get_node":kie_nano_get_node,
+    # "kie_base64_upload_node":kie_base64_upload_node,
+    # "suchuang_nano_post_node":suchuang_nano_post_node,
+    # "suchuang_get_node":suchuang_get_node,
+    "nano_banana_node":nano_banana_node,
+    # "sora2_node":sora2_node,
+    "liblib_auto_video_node":liblib_auto_video_node,
+    "sora2_suchuang_node":sora2_suchuang_node,
+    "sora2":sora2,
 }
 
 # 定义节点显示名称映射
@@ -228,9 +238,14 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Qwen3VL_235_Node":"视觉识别_v3",
     "QwenVL_Node":"视觉识别_Pro",
     "IFEXISTTEXTNODE":"文字是否存在",
-    "kie_nano_post_node":"nano_post",
-    "kie_nano_get_node":"nano_get",
-    "kie_base64_upload_node":"nano_upload",
-    "suchuang_nano_post_node":"速创_nano_post_node",
-    "suchuang_get_node":"速创_get_node",
+    # "kie_nano_post_node":"nano_post",
+    # "kie_nano_get_node":"nano_get",
+    # "kie_base64_upload_node":"nano_upload",
+    # "suchuang_nano_post_node":"速创_nano_post_node",
+    # "suchuang_get_node":"速创_get_node",
+    "nano_banana_node":"nano_banana_pro",
+    # "sora2_node":"sora2",
+    "liblib_auto_video_node":"liblib_自动视频生成",
+    "sora2_suchuang_node":"sora2_suchuang",
+    "sora2":"sora2",
 }

@@ -1,0 +1,517 @@
+import os
+import json
+import base64
+import requests
+import yaml
+import time
+from io import BytesIO
+from PIL import Image
+from torchvision import transforms
+from check import check
+
+ComfyUI_tools_by_dong_path = os.path.dirname(os.path.abspath(__file__))
+custom_node_path = os.path.dirname(ComfyUI_tools_by_dong_path)
+ComfyUI_path = os.path.dirname(custom_node_path)
+api_path = os.path.join(ComfyUI_path, "api_by_dong.yaml")
+
+
+class kie_base64_upload_node:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "optional": {
+                "image1": ("IMAGE",),
+                "image2": ("IMAGE",),
+                "image3": ("IMAGE",),
+                "image4": ("IMAGE",),
+                "image5": ("IMAGE",),
+                "image6": ("IMAGE",),
+                "image7": ("IMAGE",),
+                "image8": ("IMAGE",),
+            }
+        }
+
+    RETURN_TYPES = (
+        "STRING","STRING","STRING","STRING",
+        "STRING","STRING","STRING","STRING"
+    )
+
+    RETURN_NAMES = (
+        "image1_url","image2_url","image3_url","image4_url",
+        "image5_url","image6_url","image7_url","image8_url"
+    )
+
+    FUNCTION = "upload_images"
+    CATEGORY = "dong_tools/upload_by_dong"
+
+    def upload_images(self, **images):
+
+        # -------- 授权检查 --------
+        if not check():
+            return ("未授权用户",) * 8
+
+        if not os.path.exists(api_path):
+            return ("api_key未设置，请使用set_api节点设置api",) * 8
+
+        with open(api_path, "r") as f:
+            api_keys = yaml.safe_load(f)
+        api_key = api_keys["kie"]["api_key"]
+
+        # -------- 转 Base64 --------
+        def image_to_base64(img_tensor):
+            img_single = img_tensor[0]
+            img_single = img_single.permute(2, 0, 1)
+            pil_img = transforms.ToPILImage()(img_single)
+            buf = BytesIO()
+            pil_img.save(buf, format="PNG")
+            return base64.b64encode(buf.getvalue()).decode("utf-8")
+
+        # -------- 上传函数 --------
+        def upload_single(img_tensor):
+            if img_tensor is None:
+                return ""
+
+            base64_data = image_to_base64(img_tensor)
+            file_name = f"uploaded-{int(time.time() * 1000)}.png"
+
+            url = "https://kieai.redpandaai.co/api/file-base64-upload"
+            headers = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            }
+
+            payload = {
+                "base64Data": base64_data,
+                "uploadPath": "images/base64",
+                "fileName": file_name
+            }
+
+            try:
+                response = requests.post(url, headers=headers, data=json.dumps(payload))
+                result = response.json()
+
+                if not result.get("success"):
+                    return ""
+
+                return result["data"].get("downloadUrl", "")
+
+            except Exception:
+                return ""
+
+        # -------- 遍历 8 张图 --------
+        output_urls = []
+        for i in range(1, 9):
+            key = f"image{i}"
+            output_urls.append(upload_single(images.get(key)))
+
+        return tuple(output_urls)
+以上是将图片上传至kie
+
+import requests
+import json
+import yaml
+import os
+from check import check
+
+ComfyUI_tools_by_dong_path = os.path.dirname(os.path.abspath(__file__))
+custom_node_path = os.path.dirname(ComfyUI_tools_by_dong_path)
+ComfyUI_path = os.path.dirname(custom_node_path)
+api_path = os.path.join(ComfyUI_path, "api_by_dong.yaml")
+
+
+class kie_nano_post_node:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "image_url1": ("STRING", {"default": ""}),
+                "image_url2": ("STRING", {"default": ""}),
+                "image_url3": ("STRING", {"default": ""}),
+                "image_url4": ("STRING", {"default": ""}),
+                "image_url5": ("STRING", {"default": ""}),
+                "image_url6": ("STRING", {"default": ""}),
+                "image_url7": ("STRING", {"default": ""}),
+                "image_url8": ("STRING", {"default": ""}),
+                "model": (["nano-banana-pro"], {"default": "nano-banana-pro"}),
+                "prompt": ("STRING", {"default": ""}),
+                "aspect_ratio": (["1:1","2:3","3:2","3:4","4:3","4:5","5:4","9:16","16:9","21:9","auto"], {"default": "auto"}),
+                "resolution": (["1K","2K","4K"], {"default": "2K"}),
+            }
+        }
+
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("task_id",)
+    FUNCTION = "send_request"
+    CATEGORY = "dong_tools/nano_banana_by_dong"
+
+    def send_request(self, image_url1, image_url2, image_url3, image_url4,
+                     image_url5, image_url6, image_url7, image_url8,
+                     model, prompt, aspect_ratio, resolution):
+
+        # --- 权限检查 ---
+        if not check():
+            return ("未授权用户",)
+
+        # --- API KEY 检查 ---
+        if not os.path.exists(api_path):
+            return ("api_key未设置，请使用set_api节点设置api",)
+
+        with open(api_path, "r") as file:
+            api_keys = yaml.safe_load(file)
+        api_key = api_keys["kie"]["api_key"]
+
+        # --- 请求地址与 headers ---
+        url = "https://api.kie.ai/api/v1/jobs/createTask"
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {api_key}"
+        }
+
+        # --- 准备 payload ---
+        payload = {
+            "model": model,
+            "callBackUrl": "https://your-domain.com/api/callback",
+            "input": {
+                "prompt": prompt,
+                "aspect_ratio": aspect_ratio,
+                "resolution": resolution,
+                "output_format": "png",
+            }
+        }
+
+        # --- 组装 image_input（自动过滤空值） ---
+        image_inputs = [
+            u for u in [
+                image_url1, image_url2, image_url3, image_url4,
+                image_url5, image_url6, image_url7, image_url8
+            ] if u and u.strip() != ""
+        ]
+
+        if image_inputs:
+            payload["input"]["image_input"] = image_inputs
+
+        try:
+            response = requests.post(url, headers=headers, data=json.dumps(payload))
+            result = response.json()
+
+            # --- 避免 NoneType 崩溃 ---
+            data = result.get("data") or {}
+
+            task_id = data.get("taskId")
+
+            # 如果 task_id 不存在，返回完整错误信息
+            if not task_id:
+                return (json.dumps(result, ensure_ascii=False),)
+
+            return (task_id,)
+
+        except Exception as e:
+            return (f"Error: {str(e)}",)
+
+以上是将图片url结合prompt等进行post
+
+import os
+import requests
+import json
+import time
+from check import check
+import jwt
+import yaml
+import re
+
+ComfyUI_tools_by_dong_path = os.path.dirname(os.path.abspath(__file__))
+custom_node_path = os.path.dirname(ComfyUI_tools_by_dong_path)
+ComfyUI_path = os.path.dirname(custom_node_path)
+api_path = os.path.join(ComfyUI_path, "api_by_dong.yaml")
+
+class Get_video_Node:
+        
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(s):
+        """
+        返回节点输入参数的配置。
+        """
+        return {
+            "required": {
+                "task_id": ("STRING",), 
+                "task_type": ("STRING",),  
+                "is_enable": ("BOOLEAN", {"default": True}),
+                "Retry_time": ("INT", {"default": 30}),
+                "Retry_count": ("INT", {"default": 20}),
+            }
+        }
+
+    RETURN_TYPES = ("BOOLEAN", "STRING")  
+    RETURN_NAMES = ("bool", "video_url") 
+    FUNCTION = "get_video" 
+    CATEGORY = "dong_tools/get_video_by_dong" 
+
+    def get_video(self, task_id, task_type, is_enable, Retry_time, Retry_count):
+        def encode_jwt_token():
+            if not os.path.exists(api_path):
+                return ("NONE")
+                print("api_key未设置")
+                
+            with open(api_path, 'r') as file:
+                api_keys = yaml.safe_load(file)
+        
+            ak = api_keys['Klingai']['AccessKey_ID']
+            sk = api_keys['Klingai']['AccessKey_Secret']
+                
+            headers = {
+                "alg": "HS256",
+                "typ": "JWT"
+            }
+            payload = {
+                "iss": ak,
+                "exp": int(time.time()) + 7200,
+                "nbf": int(time.time()) - 5 
+            }
+            token = jwt.encode(payload, sk, headers=headers)
+            return token
+            
+        token = encode_jwt_token()
+        
+        if not check():
+            print("未授权用户")
+            return (False,)
+        if not is_enable:
+            print("功能已禁用")
+            return (False,) 
+        
+        url = f"https://api.klingai.com/v1/videos/{task_type}/{task_id}"
+
+        headers = {
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json"
+        }
+
+        def get_response_json():    
+            try:
+                response_data = requests.get(url, headers=headers)
+                response_data.raise_for_status() 
+                response_json = response_data.json()
+                return response_json
+            except requests.exceptions.RequestException as e:
+                print(f"请求失败: {e}")
+                return None 
+                
+        response_json = get_response_json()
+        print(response_json)
+        
+        if response_json['data']['task_status'] == "succeed":
+            video_url = response_json['data']['task_result']['videos'][0]['url']
+            return (True, video_url)
+        
+        for _ in range(Retry_count):  # 重试控制
+            response_json = get_response_json()
+            if response_json['data']['task_status'] == "succeed":
+                video_url = response_json['data']['task_result']['videos'][0]['url']
+                return (True, video_url)
+            elif response_json['data']['task_status'] == "failed":
+                task_status_msg = response_json['data']['task_status_msg']
+                print (f"任务失败，失败原因为： {task_status_msg}")
+                return (False, "任务失败，请检查终端")
+            elif response_json['data']['task_status'] == "processing":
+                print (f"视频生成中，请耐心等待。--> task_id:{task_id}\n剩余重试次数: {Retry_count - _ - 1}")
+                time.sleep(Retry_time) 
+            elif response_json['data']['task_status'] == "submitted":
+                print(f"任务已提交，等待生成...--> task_id:{task_id}")
+                time.sleep(Retry_time) 
+            else:
+                print(f"请求失败，正在重试... 剩余重试次数: {Retry_count - _ - 1}")
+                time.sleep(Retry_time)
+        
+        print(f"所有重试都失败了 /(ㄒoㄒ)/~~ \n\n task_id = {task_id}")
+        return (False, "请检查终端")
+
+以上是get
+
+import locale
+import os
+import time
+import requests
+import subprocess
+from PIL import Image, ImageOps, ImageSequence
+import numpy as np
+import torch
+import configparser
+import random
+from check import check
+class ImageDownloader:  
+    def __init__(self):
+        self.img_path = None
+        self.img_data = None
+        self._current_index = 0  # 初始化 _current_index
+
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "url_or_path": ("STRING", {"default": "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images&fl=mobile"}),
+                "file_name": ("STRING", {}),
+                "iterator_mode": (["sequential", "random", "Infinite"], {"default": "sequential"}),
+                "is_enable": ("BOOLEAN", {"default": True}),
+            }
+        }
+
+    RETURN_TYPES = ("IMAGE", "STRING")
+    RETURN_NAMES = ("img", "log")
+
+    FUNCTION = "download_image"  # 函数入口
+    CATEGORY = "dong_tools/download_img_by_dong"
+
+    def download_image_from_url(self, url_or_path, file_name, is_enable):
+        url = url_or_path
+        if not check():
+            print("未授权用户")
+            return (False,)
+        if not is_enable:
+            return (self.img_data, "功能已禁用")
+        if url is None or "http" not in url:
+            return (None, "无效的URL")
+
+        # 使用 aria2c 进行多线程下载
+        try:
+            # 构建 img_temp 目录路径
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            img_temp_dir = os.path.join(current_dir, 'img_temp')
+            os.makedirs(img_temp_dir, exist_ok=True)
+
+            # 时间戳
+            timestamp = int(time.time())
+            if file_name is None:
+                img_path = os.path.join(img_temp_dir, f'image-{timestamp}.png')
+            else:
+                img_path = os.path.join(img_temp_dir, f'{file_name}-{timestamp}.png')
+
+            cmd = [
+                "aria2c", "-o", os.path.basename(img_path), "-x", "16", "-s", "16", url, "-d", img_temp_dir
+            ]
+            subprocess.run(cmd, check=True)
+
+        except subprocess.CalledProcessError as e:
+            return (None, f"下载图片失败: {str(e)}")
+
+        # 检查图片格式并打开
+        try:
+            img = Image.open(img_path)
+            img_out = []
+            for frame in ImageSequence.Iterator(img):
+                frame = ImageOps.exif_transpose(frame)
+                if frame.mode == "I":
+                    frame = frame.point(lambda i: i * (1 / 256)).convert("L")
+                image = frame.convert("RGB")
+                image = np.array(image).astype(np.float32) / 255.0
+                image = torch.from_numpy(image).unsqueeze(0)
+                img_out.append(image)
+            img_out = img_out[0]
+            self.img_path = img_path
+            self.img_data = img_out
+
+            return (img_out, f"图片文件已保存: {img_path}")
+
+        except Exception as e:
+            return (None, f"图片处理失败: {str(e)}")
+
+    def download_image_from_path(self, url_or_path, file_name, is_enable, iterator_mode):
+        path = url_or_path
+        if not is_enable:
+            return (self.img_data, "功能已禁用")
+
+        if not os.path.exists(path):
+            return (None, "文件夹不存在")
+
+        try:
+            image_files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
+            if not image_files:
+                return (None, "文件夹中无图片")
+
+            # 根据 iterator_mode 选择图片
+            if iterator_mode == "random":
+                selected_file = random.choice(image_files)
+            elif iterator_mode == "Infinite":
+                # 无限模式：循环遍历所有文件
+                if not hasattr(self, '_current_index'):
+                    self._current_index = 0
+                selected_file = image_files[self._current_index % len(image_files)]
+                self._current_index += 1
+            else:  # 默认使用顺序模式
+                if not hasattr(self, '_current_index'):
+                    self._current_index = 0
+                selected_file = image_files[self._current_index]
+                self._current_index = (self._current_index + 1) % len(image_files)
+
+            img_path = os.path.join(path, selected_file)
+
+            # 检查图片格式并打开
+            img = Image.open(img_path)
+            img_out = []
+            for frame in ImageSequence.Iterator(img):
+                frame = ImageOps.exif_transpose(frame)
+                if frame.mode == "I":
+                    frame = frame.point(lambda i: i * (1 / 256)).convert("L")
+                image = frame.convert("RGB")
+                image = np.array(image).astype(np.float32) / 255.0
+                image = torch.from_numpy(image).unsqueeze(0)
+                img_out.append(image)
+            img_out = img_out[0]
+
+            self.img_path = img_path
+            self.img_data = img_out
+
+            return (img_out, f"图片文件已保存: {img_path}")
+
+        except Exception as e:
+            return (None, f"图片处理失败: {str(e)}")
+
+
+
+    def download_image(self, url_or_path, file_name=None, is_enable=True, iterator_mode="sequential"):
+        # if url_or_path == "":
+        #     url_or_path = "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images&fl=mobile"
+        # time.sleep(1)
+        if "http" in url_or_path:
+            return self.download_image_from_url(url_or_path, file_name, is_enable)
+        else:
+            return self.download_image_from_path(url_or_path, file_name, is_enable, iterator_mode)
+
+    @classmethod
+    def IS_CHANGED(cls, is_enable):
+        return True
+以上是从url下载图片
+
+请你将上述4大板块整合成一个节点 节点输入参数为
+    def INPUT_TYPES(s):
+        return {
+            "optional": {
+                "image1": ("IMAGE",),
+                "image2": ("IMAGE",),
+                "image3": ("IMAGE",),
+                "image4": ("IMAGE",),
+                "image5": ("IMAGE",),
+                "image6": ("IMAGE",),
+                "image7": ("IMAGE",),
+                "image8": ("IMAGE",),
+                "model": (["nano-banana-pro"], {"default": "nano-banana-pro"}),
+                "prompt": ("STRING", {"default": ""}),
+                "aspect_ratio": (["1:1","2:3","3:2","3:4","4:3","4:5","5:4","9:16","16:9","21:9","auto"], {"default": "auto"}),
+                "resolution": (["1K","2K","4K"], {"default": "2K"}),
+                "seed": ("INT", {"default": "917724495"}),
+                "Channel":("STRING",{"default": "KIE"}),#这里暂定KIE
+            }
+        }
+节点输出参数为     RETURN_TYPES = (
+        "IMAGE","BOOLEAN","STRING"
+    )
+RETURN_NAMES = ("image", "state", "log")
+CATEGORY = "dong_tools/nano_banana_by_dong"
