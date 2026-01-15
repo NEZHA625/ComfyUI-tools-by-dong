@@ -94,7 +94,7 @@ class LoraIterator:
     FUNCTION = "file"
 
     @classmethod
-    def IS_CHANGED(cls):
+    def IS_CHANGED(cls, **kwargs):
         return True
     
 

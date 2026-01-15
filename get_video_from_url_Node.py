@@ -1,11 +1,7 @@
 import os
 import requests
-from check import check
 
 class get_video_from_url_Node:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -25,11 +21,7 @@ class get_video_from_url_Node:
         if not is_enable:
             print("功能已禁用")
             return False, "功能已禁用"
-
-        if not check():
-            print("未授权用户")
-            return False, "未授权用户"
-
+            
         api_url = url
 
         try:
@@ -46,5 +38,5 @@ class get_video_from_url_Node:
             return False, f"请求错误: {str(e)}"
 
     @classmethod
-    def IS_CHANGED(cls, is_enable):
+    def IS_CHANGED(cls, **kwargs):
         return True

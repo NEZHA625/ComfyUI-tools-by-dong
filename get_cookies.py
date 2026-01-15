@@ -94,5 +94,5 @@ class Get_cookies_Node:
         return (True,)
 
     @classmethod
-    def IS_CHANGED(cls, platform, is_enable):
+    def IS_CHANGED(cls, **kwargs):
         return True

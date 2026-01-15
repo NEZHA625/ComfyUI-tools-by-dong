@@ -1,251 +1,129 @@
 import os
 import sys
-current_script_path = os.path.dirname(os.path.abspath(__file__))
-custom_nodes_path = os.path.join(current_script_path)
-sys.path.append(custom_nodes_path)
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 from .check import check
 from .su import c
-from .huggingface_upload_node import HuggingFaceUploadNode
-from .url_to_img_node import ImageDownloader  
-from .lora_iterator import LoraIterator
-from .move_by_prefix import FileMoveNode
-from .Data_handle import Data_handle_Node
-from .rename import RenameNode
-from .Logic_Tools import LogicToolsNode
-from .CategorizeNode import CategorizeNode
-from .ZIPwith7zNode import ZIPwith7zNode
-from .save_the_txt import SaveTXTNode
-from .Image2GIF import Image2GIFNode
-from .A1111_style_Flux import A1111_FLUX_DATA_NODE
-from .TranslateAPI import TranslateAPINode
-from .LibLib_upload import LibLib_upload_Node
-from .folder_iterator import FolderIteratorNODE
-from .DeepSeek_Node import DeepSeek_Node
-from .RandomNumbers import RandomNumbersNode
-from .HashCalculations import HashCalculationsNode
-from .Get_json_value import Get_json_value_Node
-from .resolution import ResolutionNode
-from .set_api import set_api_Node
-from .text_to_json import TextToJsonNode
-from .path_join_Node import path_join_Node
-from .set_appid import SetAppidNode
-from .get_cookies import Get_cookies_Node
-from .img2url import IMG2URLNode
-from .img_understanding import img_understanding_Node
-from .save_img import save_img_NODE
-from .Klingai_post_node import klingai_video_Node
-from .Klingai_get_node import Get_video_Node
-from .Downloader import Downloader
-from .Delay_node import Delay_node
-from .Dong_Text_Node import Dong_Text_Node
-# from .DongShowTextNode import DongShowTextNode
-from .PromptConcatNode import PromptConcatNode
-from .ImageResizeNode import ImageResizeNode
-from .Dong_Pixelate_Node import Dong_Pixelate_Node
-from .find_files_by_extension_Node import find_files_by_extension_Node
-from .Delete_folder_Node import Delete_folder_Node
-# from .Notice_Node import Notice_Node
-from .text_replace_node import text_replace_node
-from .cogview_3_flash_Node import cogview_3_flash_Node
-from .file_analysis_Node import file_analysis_Node
-from .cogvideox_flash_post_Node import cogvideox_flash_post_Node
-from .cogvideox_flash_get_Node import cogvideox_flash_get_Node
-from .Wan21_post_Node import Wan21_post_Node
-from .Wan21_get_Node import Wan21_get_Node
-from .get_video_from_url_Node import get_video_from_url_Node
-# from .douyin_remove_watermark_Node import douyin_remove_watermark_Node
-from .AudioPathToAudioNode import AudioPathToAudioNode
-from .AudioDurationNode import AudioDurationNode
-from .img2url_v2_Node import img2url_v2_Node
-from .bailian_model_select_Node import bailian_model_select_Node
-from .DownloadNode import DownloadNode
-from .CountFilesFromFolderNode import CountFilesFromFolderNode
-from .GetImageListFromFloderNode import GetImageListFromFloderNode
-from .GetImageListFromFloderNode2 import GetImageListFromFloderNode2
-from .INTNODE import INTNODE
-from .DouBao import doubaoNode
-from .image_iterator import image_iterator
-from .img_understanding_v2 import GLM_Node
-from .save_img_v2 import save_img_v2_NODE
-from .get_image_list import GetRefModelImageListNode
-from .get_text_from_list import get_text_from_list_Node
-from .Check_Vram import checkvram_node
-from .Qwen3VL_30B_A3B_Thinking import Qwen3VL_30_Node
-from .Qwen3VL_235B_A22B_Thinking import Qwen3VL_235_Node
-from .QwenVL import QwenVL_Node
-from .IFEXISTTEXTNODE import IFEXISTTEXTNODE
-# from .kie_nano_post_node import kie_nano_post_node
-# from .kie_nano_get_node import kie_nano_get_node
-# from .kie_base64_upload_node import kie_base64_upload_node
-# from .suchuang_nano_post_node import suchuang_nano_post_node
-# from .suchuang_get_node import suchuang_get_node
-from .nano_banana_node import nano_banana_node
-# from .sora2_node import sora2_node
-from .liblib_auto_video_node import liblib_auto_video_node
-from .sora2_suchuang_node import sora2_suchuang_node
-from .sora2 import sora2
+from .音频时长计算节点 import 音频时长计算节点
+from .宫格图切分节点 import 宫格图切分节点
+from .小显存检测节点 import 小显存检测节点
+from .数据存在性检测节点 import 数据存在性检测节点
+from .删除文件节点 import 删除文件节点
+from .文本输入节点 import 文本输入节点
+from .字符存在性检测节点 import 字符存在性检测节点
+from .图像迭代节点 import 图像迭代节点
+from .分辨率节点 import 分辨率节点
+from .翻译节点 import 翻译节点
+from .文件下载节点 import 文件下载节点
+from .移动文件节点 import 移动文件节点
+from .随机数节点 import 随机数节点
+from .压缩节点 import 压缩节点
+from .重命名节点 import 重命名节点
+from .计算文件数量节点 import 计算文件数量节点
+from .保存文本节点 import 保存文本节点
+from .模型下载节点 import 模型下载节点
+from .获取图像列表节点 import 获取图像列表节点
+from .JSON取值节点 import JSON取值节点
+from .保存图像节点 import 保存图像节点
+from .DeepSeek节点 import DeepSeek节点
+from .QwenVL节点 import QwenVL节点
+from .Banana节点 import Banana节点
+from .Sora2节点 import Sora2节点
+from .段落数计算节点 import 段落数计算节点
+from .从文本列表获取文本节点 import 从文本列表获取文本节点
+from .逻辑节点 import 逻辑节点
+from .通用API节点 import 通用API节点
+from .JSON单键值构建节点 import JSON单键值构建节点
+from .JSON多键值构建节点 import JSON多键值构建节点
+from .JSON合并节点 import JSON合并节点
+from .仙宫云环境变量节点 import 仙宫云环境变量节点
+from .取整函数节点 import 取整函数节点
+from .文件夹迭代节点 import 文件夹迭代节点
+from .路径加入节点 import 路径加入节点
+from .获取视频路径节点 import 获取视频路径节点
+from .外补画板节点 import 外补画板节点
+from .Sora2节点 import Sora2节点
 
 NODE_CLASS_MAPPINGS = {
-    "HuggingFaceUploadNode": HuggingFaceUploadNode,
-    "ImageDownloader": ImageDownloader,
-    "LoraIterator": LoraIterator,
-    "FileMoveNode": FileMoveNode,
-    "Data_handle_Node": Data_handle_Node,
-    "RenameNode": RenameNode,
-    "LogicToolsNode": LogicToolsNode,
-    "CategorizeNode": CategorizeNode,
-    "ZIPwith7zNode": ZIPwith7zNode,
-    "SaveTXTNode": SaveTXTNode,
-    "Image2GIFNode": Image2GIFNode,
-    "A1111_FLUX_DATA_NODE": A1111_FLUX_DATA_NODE,
-    "TranslateAPINode":TranslateAPINode,
-    "LibLib_upload_Node":LibLib_upload_Node,    
-    "FolderIteratorNODE":FolderIteratorNODE,
-    "DeepSeek_Node":DeepSeek_Node,  
-    "RandomNumbersNode":RandomNumbersNode,
-    "HashCalculationsNode":HashCalculationsNode,
-    "Get_json_value_Node":Get_json_value_Node,
-    "ResolutionNode":ResolutionNode,
-    "set_api_Node":set_api_Node,
-    "TextToJsonNode":TextToJsonNode,
-    "path_join_Node":path_join_Node,
-    "SetAppidNode":SetAppidNode,
-    "Get_cookies_Node":Get_cookies_Node,
-    "IMG2URLNode":IMG2URLNode,
-    "img_understanding_Node":img_understanding_Node,
-    "save_img_NODE":save_img_NODE,
-    "klingai_video_Node":klingai_video_Node,
-    "Get_video_Node":Get_video_Node,
-    "Downloader":Downloader,
-    "Delay_node":Delay_node,
-    "Dong_Text_Node":Dong_Text_Node,
-    # "DongShowTextNode":DongShowTextNode,
-    "PromptConcatNode":PromptConcatNode,
-    "ImageResizeNode":ImageResizeNode,
-    "Dong_Pixelate_Node":Dong_Pixelate_Node,
-    "find_files_by_extension_Node":find_files_by_extension_Node,
-    "Delete_folder_Node":Delete_folder_Node,
-    # "Notice_Node":Notice_Node,
-    "text_replace_node":text_replace_node,
-    "cogview_3_flash_Node":cogview_3_flash_Node,
-    "file_analysis_Node":file_analysis_Node,
-    "cogvideox_flash_post_Node":cogvideox_flash_post_Node,
-    "cogvideox_flash_get_Node":cogvideox_flash_get_Node,
-    "Wan21_post_Node":Wan21_post_Node,
-    "Wan21_get_Node":Wan21_get_Node,
-    "get_video_from_url_Node":get_video_from_url_Node,
-    # "douyin_remove_watermark_Node":douyin_remove_watermark_Node,
-    "AudioPathToAudioNode":AudioPathToAudioNode,
-    "AudioDurationNode":AudioDurationNode,
-    "img2url_v2_Node":img2url_v2_Node,
-    "bailian_model_select_Node":bailian_model_select_Node,
-    "DownloadNode":DownloadNode,
-    "CountFilesFromFolderNode":CountFilesFromFolderNode,
-    "GetImageListFromFloderNode":GetImageListFromFloderNode,
-    "GetImageListFromFloderNode2":GetImageListFromFloderNode2,
-    "INTNODE":INTNODE,
-    "doubaoNode":doubaoNode,
-    "image_iterator":image_iterator,
-    "GLM_Node":GLM_Node,
-    "save_img_v2_NODE":save_img_v2_NODE,
-    "GetRefModelImageListNode":GetRefModelImageListNode,
-    "get_text_from_list_Node":get_text_from_list_Node,
-    "checkvram_node":checkvram_node,
-    "Qwen3VL_30_Node":Qwen3VL_30_Node,
-    "Qwen3VL_235_Node":Qwen3VL_235_Node,
-    "QwenVL_Node":QwenVL_Node,
-    "IFEXISTTEXTNODE":IFEXISTTEXTNODE,
-    # "kie_nano_post_node":kie_nano_post_node,
-    # "kie_nano_get_node":kie_nano_get_node,
-    # "kie_base64_upload_node":kie_base64_upload_node,
-    # "suchuang_nano_post_node":suchuang_nano_post_node,
-    # "suchuang_get_node":suchuang_get_node,
-    "nano_banana_node":nano_banana_node,
-    # "sora2_node":sora2_node,
-    "liblib_auto_video_node":liblib_auto_video_node,
-    "sora2_suchuang_node":sora2_suchuang_node,
-    "sora2":sora2,
+    "音频时长计算节点":音频时长计算节点,
+    "宫格图切分节点":宫格图切分节点,
+    "小显存检测节点":小显存检测节点,
+    "数据存在性检测节点":数据存在性检测节点,
+    "删除文件节点":删除文件节点,
+    "文本输入节点":文本输入节点,
+    "字符存在性检测节点":字符存在性检测节点,
+    "图像迭代节点":图像迭代节点,
+    "分辨率节点":分辨率节点,
+    "翻译节点":翻译节点,
+    "文件下载节点":文件下载节点,
+    "移动文件节点":移动文件节点,
+    "随机数节点":随机数节点,
+    "压缩节点":压缩节点,
+    "重命名节点":重命名节点,
+    "计算文件数量节点":计算文件数量节点,
+    "保存文本节点":保存文本节点,
+    "模型下载节点":模型下载节点,
+    "获取图像列表节点":获取图像列表节点,
+    "JSON取值节点":JSON取值节点,
+    "保存图像节点":保存图像节点,
+    "DeepSeek节点":DeepSeek节点,
+    "QwenVL节点":QwenVL节点,
+    "Banana节点":Banana节点,
+    "Sora2节点":Sora2节点,
+    "段落数计算节点":段落数计算节点,
+    "从文本列表获取文本节点":从文本列表获取文本节点,
+    "逻辑节点":逻辑节点,
+    "通用API节点":通用API节点,
+    "JSON单键值构建节点":JSON单键值构建节点,
+    "JSON多键值构建节点":JSON多键值构建节点,
+    "JSON合并节点":JSON合并节点,
+    "仙宫云环境变量节点":仙宫云环境变量节点,
+    "取整函数节点":取整函数节点,
+    "文件夹迭代节点":文件夹迭代节点,
+    "路径加入节点":路径加入节点,
+    "获取视频路径节点":获取视频路径节点,
+    "外补画板节点":外补画板节点,
+    "Sora2节点":Sora2节点,
 }
 
-# 定义节点显示名称映射
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "HuggingFaceUploadNode": "HuggingFace_upload_by_dong",
-    "ImageDownloader": "get_image",
-    "LoraIterator": "Lora迭代器",
-    "FileMoveNode": "移动文件",
-    "Data_handle_Node": "数据处理",
-    "RenameNode": "重命名",
-    "LogicToolsNode": "逻辑",
-    "CategorizeNode": "分类",
-    "ZIPwith7zNode": "压缩",
-    "SaveTXTNode": "保存文本",
-    "Image2GIFNode": "图像转GIF",
-    "A1111_FLUX_DATA_NODE": "A1111_FLUX_DATA_by_dong",
-    "TranslateAPINode":"翻译",
-    "LibLib_upload_Node":"LibLib_upload_by_dong",
-    "FolderIteratorNODE":"文件夹迭代器",
-    "DeepSeek_Node":"DeepSeek",
-    "RandomNumbersNode":"种子",
-    "HashCalculationsNode":"哈希计算",
-    "Get_json_value_Node":"json取值",
-    "ResolutionNode":"分辨率",
-    "set_api_Node":"设置API",
-    "TextToJsonNode":"save_to_json_by_dong",
-    "path_join_Node":"路径加入",
-    "SetAppidNode":"授权",
-    "Get_cookies_Node":"登录",
-    "IMG2URLNode":"Img2url_by_dong",
-    "img_understanding_Node":"图片理解",
-    "save_img_NODE":"保存图片",
-    "klingai_video_Node":"video_by_dong",
-    "Get_video_Node":"Get_video_by_dong",
-    "Downloader":"下载器",
-    "Delay_node":"sleep",
-    "Dong_Text_Node":"文本",
-    # "DongShowTextNode":"展示文本",
-    "PromptConcatNode":"文本连接",
-    "ImageResizeNode":"Image_Resize",
-    "Dong_Pixelate_Node":"图片像素化",
-    "find_files_by_extension_Node":"find_files_by_extension_by_dong",
-    "Delete_folder_Node":"删除文件夹",
-    # "Notice_Node":"通知",
-    "text_replace_node":"文本替换",
-    "cogview_3_flash_Node":"cogview_3_flash_by_dong",
-    "file_extract_Node":"file_analysis_by_dong",
-    "cogvideox_flash_post_Node":"cogvideox_flash_post_by_dong",
-    "cogvideox_flash_get_Node":"cogvideox_flash_get_by_dong",
-    "Wan21_post_Node":"Wan21_post_Node_by_dong",
-    "Wan21_get_Node":"Wan21_get_Node_by_dong",
-    "get_video_from_url_Node":"get_video_from_url_by_dong",
-    # "douyin_remove_watermark_Node":"抖音去水印",
-    "AudioPathToAudioNode":"从路径到音频",
-    "AudioDurationNode":"获取音频时长",
-    "img2url_v2_Node":"img2url_v2_by_dong",
-    "bailian_model_select_Node":"百炼模型选择",
-    "DownloadNode":"模型下载器",
-    "CountFilesFromFolderNode":"文件数计算",
-    "GetImageListFromFloderNode":"获取图像列表",
-    "GetImageListFromFloderNode2":"获取图像列表2",
-    "INTNODE":"INT",
-    "doubaoNode":"豆包",
-    "image_iterator":"图片递归迭代",
-    "GLM_Node":"视觉识别",
-    "save_img_v2_NODE":"保存图像_v2",
-    "GetRefModelImageListNode":"获取图像列表_v2",
-    "get_text_from_list_Node":"从列表获取文本",
-    "checkvram_node":"是否低显存",
-    "Qwen3VL_30_Node":"视觉识别_v2",
-    "Qwen3VL_235_Node":"视觉识别_v3",
-    "QwenVL_Node":"视觉识别_Pro",
-    "IFEXISTTEXTNODE":"文字是否存在",
-    # "kie_nano_post_node":"nano_post",
-    # "kie_nano_get_node":"nano_get",
-    # "kie_base64_upload_node":"nano_upload",
-    # "suchuang_nano_post_node":"速创_nano_post_node",
-    # "suchuang_get_node":"速创_get_node",
-    "nano_banana_node":"nano_banana_pro",
-    # "sora2_node":"sora2",
-    "liblib_auto_video_node":"liblib_自动视频生成",
-    "sora2_suchuang_node":"sora2_suchuang",
-    "sora2":"sora2",
+    "音频时长计算节点": "音频时长计算",
+    "宫格图切分节点":"宫格切分",
+    "小显存检测节点":"小显存检测",
+    "数据存在性检测节点":"数据存在性检测",
+    "删除文件节点":"删除文件或文件夹",
+    "文本输入节点":"文本",
+    "字符存在性检测节点":"字符检测",
+    "图像迭代节点":"图像迭代",
+    "分辨率节点":"分辨率",
+    "翻译节点":"翻译",
+    "文件下载节点":"文件下载",
+    "移动文件节点":"移动文件",
+    "随机数节点":"随机数",
+    "压缩节点":"压缩",
+    "重命名节点":"重命名",
+    "计算文件数量节点":"计算文件数量",
+    "保存文本节点":"保存文本",
+    "模型下载节点":"模型下载",
+    "获取图像列表节点":"获取图像列表",
+    "JSON取值节点":"JSON取值",
+    "保存图像节点":"保存图像",
+    "DeepSeek节点":"DeepSeek",
+    "QwenVL节点":"QwenVL",
+    "Banana节点":"nano_banana_pro",
+    "Sora2节点":"Sora2",
+    "段落数计算节点":"段落数计算",
+    "从文本列表获取文本节点":"索引文本",
+    "逻辑节点":"逻辑",
+    "通用API节点":"通用API",
+    "JSON单键值构建节点":"JSON_Build",
+    "JSON多键值构建节点":"JSON_Build_Multi",
+    "JSON合并节点":"JSON合并",
+    "仙宫云环境变量节点":"仙宫云环境变量",
+    "取整函数节点":"取整函数",
+    "文件夹迭代节点":"文件夹迭代",
+    "路径加入节点":"路径加入",
+    "获取视频路径节点":"获取视频路径",
+    "外补画板节点":"外补画板",
+    "Sora2节点":"Sora2",
 }
