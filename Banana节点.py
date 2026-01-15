@@ -423,7 +423,7 @@ class Banana节点:
                     except Exception as e:
                         return (None, False, f"下载图片失败: {e}")
 
-                if state == "fail":
+                if state == "failed":
                     fail_msg = data.get("failure_reason", "生成失败")
                     return (None, False, fail_msg)
 
