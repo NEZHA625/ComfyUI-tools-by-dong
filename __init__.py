@@ -43,6 +43,7 @@ from .路径加入节点 import 路径加入节点
 from .获取视频路径节点 import 获取视频路径节点
 from .外补画板节点 import 外补画板节点
 from .Sora2节点 import Sora2节点
+from .字符处理节点 import 字符处理节点
 
 NODE_CLASS_MAPPINGS = {
     "音频时长计算节点":音频时长计算节点,
@@ -84,6 +85,7 @@ NODE_CLASS_MAPPINGS = {
     "获取视频路径节点":获取视频路径节点,
     "外补画板节点":外补画板节点,
     "Sora2节点":Sora2节点,
+    "字符处理节点":字符处理节点,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -126,4 +128,5 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "获取视频路径节点":"获取视频路径",
     "外补画板节点":"外补画板",
     "Sora2节点":"Sora2",
+    "字符处理节点":"字符处理",
 }

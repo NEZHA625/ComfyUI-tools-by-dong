@@ -21,19 +21,19 @@ class 获取图像列表节点:
             }
         }
 
-    RETURN_TYPES = ("BOOLEAN", "IMAGE", "STRING")  
-    RETURN_NAMES = ("状态", "图像列表", "名称列表") 
+    RETURN_TYPES = ("BOOLEAN", "IMAGE", "STRING","INT")  
+    RETURN_NAMES = ("状态", "图像列表", "名称列表","数量") 
     FUNCTION = "处理图像" 
     CATEGORY = "dong_tools/get_image_list_by_dong" 
 
     def 处理图像(self, 文件夹, 节点开关, 递归子文件夹):
         if not 节点开关:
             print("功能已禁用")
-            return (False, None, None)
+            return (False, None, None,0)
 
         if not check():
             print("未授权用户")
-            return (False, None, None)
+            return (False, None, None,0)
 
         有效后缀 = {'.png', '.jpg', '.jpeg', '.webp'}
         图像路径列表 = []
@@ -64,7 +64,7 @@ class 获取图像列表节点:
 
         if not 图像路径列表:
             print(f"No valid images found in {文件夹}")
-            return (False, None, None)
+            return (False, None, None,0)
         
         图像列表 = []
         名称列表 = []
@@ -85,6 +85,6 @@ class 获取图像列表节点:
         
         if not 图像列表:
             print("No images could be loaded")
-            return (False, None, None)
-        
-        return (True, 图像列表, "\n".join(名称列表))
+            return (False, None, None,0)
+        数量 = len(图像列表)
+        return (True, 图像列表, "\n".join(名称列表),数量)
